@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "cookscollection:block/fruiting_lemon_leaves_2"
+  }
+}

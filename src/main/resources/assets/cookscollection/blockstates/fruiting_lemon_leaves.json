@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "cookscollection:block/fruiting_lemon_leaves_0"
+    },
+    "age=1": {
+      "model": "cookscollection:block/fruiting_lemon_leaves_1"
+    },
+    "age=2": {
+      "model": "cookscollection:block/fruiting_lemon_leaves_2"
+    },
+    "age=3": {
+      "model": "cookscollection:block/fruiting_lemon_leaves_3"
+    },
+    "age=4": {
+      "model": "cookscollection:block/fruiting_lemon_leaves_4"
+    }
+  }
+}

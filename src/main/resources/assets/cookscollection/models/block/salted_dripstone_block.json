@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "cookscollection:block/salted_dripstone_block"
+  }
+}

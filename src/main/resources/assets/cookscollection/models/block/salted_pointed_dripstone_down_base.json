@@ -1,0 +1,6 @@
+{
+  "parent": "cookscollection:block/salted_pointed_dripstone",
+  "textures": {
+    "cross": "cookscollection:block/salted_pointed_dripstone_down_base"
+  }
+}

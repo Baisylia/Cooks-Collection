@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "cookscollection:block/lemon_crate_side",
+    "bottom": "cookscollection:block/crate_bottom",
+    "top": "cookscollection:block/lemon_crate_top"
+  }
+}
