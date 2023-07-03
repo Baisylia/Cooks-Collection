@@ -2,9 +2,14 @@ package com.ncpbails.cookscollection;
 
 import com.mojang.logging.LogUtils;
 import com.ncpbails.cookscollection.block.ModBlocks;
+import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
 import com.ncpbails.cookscollection.item.ModItems;
+import com.ncpbails.cookscollection.recipe.ModRecipes;
+import com.ncpbails.cookscollection.screen.ModMenuTypes;
+import com.ncpbails.cookscollection.screen.OvenScreen;
 import com.ncpbails.cookscollection.world.feature.ModConfiguredFeatures;
 import com.ncpbails.cookscollection.world.feature.ModPlacedFeatures;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,8 +36,11 @@ public class CooksCollection
 
         ModItems.register(eventBus);
         ModBlocks.register(eventBus);
+        ModBlockEntities.register(eventBus);
         ModConfiguredFeatures.register(eventBus);
         ModPlacedFeatures.register(eventBus);
+        ModMenuTypes.register(eventBus);
+        ModRecipes.register(eventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -50,6 +58,7 @@ public class CooksCollection
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SALTED_POINTED_DRIPSTONE.get(), RenderType.cutoutMipped());
+            MenuScreens.register(ModMenuTypes.OVEN_MENU.get(), OvenScreen::new);
         }
     }
 }

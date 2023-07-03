@@ -23,6 +23,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.AcaciaFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.BlobFoliagePlacer;
+import net.minecraft.world.level.levelgen.feature.foliageplacers.DarkOakFoliagePlacer;
+import net.minecraft.world.level.levelgen.feature.foliageplacers.MegaJungleFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.BendingTrunkPlacer;
@@ -42,10 +44,15 @@ public class ModConfiguredFeatures {
             CONFIGURED_FEATURES.register("lemon", () ->
                     new ConfiguredFeature<>(Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
                             BlockStateProvider.simple(ModBlocks.LEMON_LOG.get()),
-                            new LemonTrunkPlacer(5, 2, 2),
+                            //new LemonTrunkPlacer(5, 2, 2),
+                            new StraightTrunkPlacer(5, 2, 2),
                             new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(ModBlocks.LEMON_LEAVES.get().defaultBlockState(),
-                                    3).add(ModBlocks.FRUITING_LEMON_LEAVES.get().defaultBlockState().setValue(FruitingLeaves.AGE, 4), 1)),
-                            new AcaciaFoliagePlacer(ConstantInt.of(3), ConstantInt.of(0)),
+                                    4).add(ModBlocks.FRUITING_LEMON_LEAVES.get().defaultBlockState().setValue(FruitingLeaves.AGE, 4), 1)),
+                            //new MegaJungleFoliagePlacer(ConstantInt.of(0), ConstantInt.of(0), 2),
+                            new BlobFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0), 3),
+                            //new DarkOakFoliagePlacer(ConstantInt.of(0), ConstantInt.of(2)),
+                            //new BlobFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0), 4),
+                            //new AcaciaFoliagePlacer(ConstantInt.of(3), ConstantInt.of(0)),
                             new TwoLayersFeatureSize(1, 0, 1)).ignoreVines().build()));
     public static final RegistryObject<ConfiguredFeature<?, ?>> LEMON_SPAWN =
             CONFIGURED_FEATURES.register("lemon_spawn", () -> new ConfiguredFeature<>(Feature.RANDOM_SELECTOR,

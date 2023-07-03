@@ -2,6 +2,7 @@ package com.ncpbails.cookscollection.block;
 
 import com.ncpbails.cookscollection.CooksCollection;
 import com.ncpbails.cookscollection.block.custom.FruitingLeaves;
+import com.ncpbails.cookscollection.block.custom.OvenBlock;
 import com.ncpbails.cookscollection.block.custom.RusticLoafBlock;
 import com.ncpbails.cookscollection.block.custom.SaltedPointedDripstone;
 import com.ncpbails.cookscollection.item.ModItems;
@@ -86,6 +87,11 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> SALTED_DRIPSTONE_BLOCK = registerBlock("salted_dripstone_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK).noOcclusion()), FarmersDelight.CREATIVE_TAB, false, 0);
+
+
+    public static final RegistryObject<Block> OVEN = registerBlock("oven",
+            () -> new OvenBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_GRAY)
+                    .strength(5.0f, 6.0f).requiresCorrectToolForDrops()), CreativeModeTab.TAB_DECORATIONS, false, 0);
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab, Boolean isFuel, Integer fuelAmount) {
