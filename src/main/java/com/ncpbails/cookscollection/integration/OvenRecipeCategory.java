@@ -20,7 +20,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
     public final static ResourceLocation UID = new ResourceLocation(CooksCollection.MOD_ID, "baking");
     public final static ResourceLocation TEXTURE =
-            new ResourceLocation(CooksCollection.MOD_ID, "textures/gui/oven_gui.png");
+            new ResourceLocation(CooksCollection.MOD_ID, "textures/gui/oven_gui_jei.png");
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -52,15 +52,15 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, OvenRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 21, 20).addIngredients(recipe.getIngredients().get(0));
-        builder.addSlot(RecipeIngredientRole.INPUT, 39, 20).addIngredients(recipe.getIngredients().get(1));
-        builder.addSlot(RecipeIngredientRole.INPUT, 57, 20).addIngredients(recipe.getIngredients().get(2));
-        builder.addSlot(RecipeIngredientRole.INPUT, 75, 20).addIngredients(recipe.getIngredients().get(3));
-        builder.addSlot(RecipeIngredientRole.INPUT, 21, 38).addIngredients(recipe.getIngredients().get(4));
-        builder.addSlot(RecipeIngredientRole.INPUT, 39, 38).addIngredients(recipe.getIngredients().get(5));
-        builder.addSlot(RecipeIngredientRole.INPUT, 57, 38).addIngredients(recipe.getIngredients().get(6));
-        builder.addSlot(RecipeIngredientRole.INPUT, 75, 38).addIngredients(recipe.getIngredients().get(7));
-        builder.addSlot(RecipeIngredientRole.INPUT, 75, 62).addIngredients(Ingredient.of(ModItems.LEMON.get()));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 135, 30).addItemStack(recipe.getResultItem());
+        builder.addSlot(RecipeIngredientRole.INPUT, 30, 19).addIngredients(recipe.getIngredients().get(0));
+        builder.addSlot(RecipeIngredientRole.INPUT, 48, 19).addIngredients(recipe.getIngredients().get(1));
+        builder.addSlot(RecipeIngredientRole.INPUT, 66, 19).addIngredients(recipe.getIngredients().get(2));
+        builder.addSlot(RecipeIngredientRole.INPUT, 30, 37).addIngredients(recipe.getIngredients().get(3));
+        builder.addSlot(RecipeIngredientRole.INPUT, 48, 37).addIngredients(recipe.getIngredients().get(4));
+        builder.addSlot(RecipeIngredientRole.INPUT, 66, 37).addIngredients(recipe.getIngredients().get(5));
+        builder.addSlot(RecipeIngredientRole.INPUT, 30, 55).addIngredients(recipe.getIngredients().get(6));
+        builder.addSlot(RecipeIngredientRole.INPUT, 48, 55).addIngredients(recipe.getIngredients().get(7));
+        builder.addSlot(RecipeIngredientRole.INPUT, 66, 55).addIngredients(recipe.getIngredients().get(8));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 124, 37).addItemStack(recipe.getResultItem());
     }
 }

@@ -41,7 +41,10 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
         for(int j = 0; j < 9; ++j) {
             ItemStack itemstack = pContainer.getItem(j);
-            ++i;
+            if (!itemstack.isEmpty()) {
+                ++i;
+                inputs.add(itemstack);
+            }
             stackedcontents.accountStack(itemstack, 1);
         }
             return i == this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, null) :
