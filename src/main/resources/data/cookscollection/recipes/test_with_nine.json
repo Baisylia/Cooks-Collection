@@ -1,0 +1,35 @@
+{
+  "type": "cookscollection:baking",
+  "ingredients": [
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    }
+  ],
+  "output": {
+    "item": "cookscollection:lemon"
+  }
+}

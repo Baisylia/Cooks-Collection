@@ -2,18 +2,6 @@
   "type": "cookscollection:baking",
   "ingredients": [
     {
-      "item": "minecraft:iron_ingot"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    },
-    {
       "item": "cookscollection:lemon"
     },
     {
@@ -30,6 +18,6 @@
     }
   ],
   "output": {
-    "item": "cookscollection:lemon"
+    "item": "minecraft:emerald"
   }
 }

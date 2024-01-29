@@ -14,16 +14,22 @@
       "item": "minecraft:iron_ingot"
     },
     {
-      "item": "cookscollection:lemon"
+      "item": "minecraft:iron_ingot"
     },
     {
-      "item": "cookscollection:lemon"
+      "item": "minecraft:iron_ingot"
     },
     {
-      "item": "cookscollection:lemon"
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:air"
+    },
+    {
+      "item": "minecraft:air"
     }
   ],
   "output": {
-    "item": "cookscollection:diamond"
+    "item": "minecraft:diamond"
   }
 }
