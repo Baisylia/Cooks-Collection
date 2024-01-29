@@ -2,6 +2,7 @@ package com.ncpbails.cookscollection.recipe;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.ncpbails.cookscollection.CooksCollection;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,8 +13,10 @@ import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.RecipeMatcher;
 
+import java.util.EnumSet;
 import java.util.List;
 
 public class OvenRecipe implements Recipe<SimpleContainer> {
@@ -38,10 +41,8 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
         for(int j = 0; j < 9; ++j) {
             ItemStack itemstack = pContainer.getItem(j);
-            if (!itemstack.isEmpty()) {
-                ++i;
-                stackedcontents.accountStack(itemstack, 1);
-            }
+            ++i;
+            stackedcontents.accountStack(itemstack, 1);
         }
             return i == this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, null) :
                     RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
@@ -95,16 +96,30 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
         @Override
         public OvenRecipe fromJson(ResourceLocation id, JsonObject json) {
-            ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "output"));
+            NonNullList<Ingredient> inputs = readIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
+            if (inputs.isEmpty()) {
+                throw new JsonParseException("No ingredients for cooking recipe");
+            } else if (inputs.size() > 9) {
+                throw new JsonParseException("Too many ingredients for cooking recipe! The max is 9");
+            } else {
+                ItemStack output = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "output"), true);
 
-            JsonArray ingredients = GsonHelper.getAsJsonArray(json, "ingredients");
-            NonNullList<Ingredient> inputs = NonNullList.withSize(9, Ingredient.EMPTY);
+                //int cookTimeIn = GsonHelper.getAsInt(json, "cookingtime", 200);
+                return new OvenRecipe(id, output, inputs);
+            }
+        }
 
-            for (int i = 0; i < inputs.size(); i++) {
-                inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
+        private static NonNullList<Ingredient> readIngredients(JsonArray ingredientArray) {
+            NonNullList<Ingredient> nonnulllist = NonNullList.create();
+
+            for(int i = 0; i < ingredientArray.size(); ++i) {
+                Ingredient ingredient = Ingredient.fromJson(ingredientArray.get(i));
+                if (!ingredient.isEmpty()) {
+                    nonnulllist.add(ingredient);
+                }
             }
 
-            return new OvenRecipe(id, output, inputs);
+            return nonnulllist;
         }
 
         @Override
