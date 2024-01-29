@@ -34,7 +34,8 @@ public class JEICooksCollectionPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         RecipeManager rm = Objects.requireNonNull(Minecraft.getInstance().level).getRecipeManager();
 
-        List<OvenRecipe> recipesInfusing = rm.getAllRecipesFor(OvenRecipe.Type.INSTANCE);
-        registration.addRecipes(BAKING_TYPE, recipesInfusing);
+        List<OvenRecipe> recipes = rm.getAllRecipesFor(OvenRecipe.Type.INSTANCE);
+        System.out.println(recipes);
+        registration.addRecipes(BAKING_TYPE, recipes);
     }
 }

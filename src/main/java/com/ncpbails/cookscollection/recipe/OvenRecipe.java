@@ -24,13 +24,13 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
-    private final boolean isSimple;
+    //private final boolean isSimple;
 
     public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
-        this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
+        //this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
     }
 
     @Override
@@ -47,8 +47,10 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
             }
             stackedcontents.accountStack(itemstack, 1);
         }
-            return i == this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, null) :
-                    RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
+            //return i >= this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, null) :
+                //RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
+
+            return i >= this.recipeItems.size() && RecipeMatcher.findMatches(inputs, this.recipeItems) != null;
     }
 
     @Override
@@ -145,26 +147,5 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
             }
             buf.writeItemStack(recipe.getResultItem(), false);
         }
-
-        //@Override
-        //public RecipeSerializer<?> setRegistryName(ResourceLocation name) {
-        //    return INSTANCE;
-        //}
-
-        //@Nullable
-        //@Override
-        //public ResourceLocation getRegistryName() {
-        //    return ID;
-        //}
-
-        //@Override
-        //public Class<RecipeSerializer<?>> getRegistryType() {
-        //    return Serializer.castClass(RecipeSerializer.class);
-        //}
-
-        //@SuppressWarnings("unchecked") // Need this wrapper, because generics
-        //private static <G> Class<G> castClass(Class<?> cls) {
-        //    return (Class<G>)cls;
-        //}
     }
 }
