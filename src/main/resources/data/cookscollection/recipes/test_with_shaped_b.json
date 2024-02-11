@@ -1,0 +1,17 @@
+{
+  "type": "cookscollection:baking_shaped",
+  "cooktime": 200,
+  "key": {
+    "#": {
+      "item": "minecraft:bone"
+    }
+  },
+  "pattern": [
+    "###",
+    "   ",
+    "###"
+  ],
+  "result": {
+    "item": "minecraft:iron_ingot"
+  }
+}

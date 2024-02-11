@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
 import com.ncpbails.cookscollection.item.ModItems;
 import com.ncpbails.cookscollection.recipe.OvenRecipe;
+import com.ncpbails.cookscollection.recipe.OvenShapedRecipe;
 import com.ncpbails.cookscollection.screen.OvenMenu;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -179,16 +180,23 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        Optional<OvenRecipe> match = level.getRecipeManager()
+        // Check for OvenShapedRecipe
+        Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
+                .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
+
+        // Check for OvenRecipe
+        Optional<OvenRecipe> recipeMatch = level.getRecipeManager()
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
-        if(match.isPresent()) { entity.maxProgress = match.get().getCookTime();}
-        return match.isPresent()
-                && isFueled(entity, pos, level) && (
-                    inventory.getItem(9).isEmpty()
-                            || inventory.getItem(9).is(match.get().getResultItem().getItem())
-                                    && inventory.getItem(9).getMaxStackSize() > inventory.getItem(9).getCount()
-                );
+        if (shapedMatch.isPresent()) {
+            entity.maxProgress = shapedMatch.get().getCookTime();
+            return true;
+        } else if (recipeMatch.isPresent()) {
+            entity.maxProgress = recipeMatch.get().getCookTime();
+            return true;
+        }
+
+        return false;
     }
 
     static boolean isFueled(OvenBlockEntity entity, BlockPos pos, Level level) {
@@ -218,10 +226,15 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        Optional<OvenRecipe> match = level.getRecipeManager()
+        // Check for OvenShapedRecipe
+        Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
+                .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
+
+        // Check for OvenRecipe
+        Optional<OvenRecipe> recipeMatch = level.getRecipeManager()
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
-        if(match.isPresent()) {
+        if (shapedMatch.isPresent()) {
             entity.itemHandler.extractItem(0,1, false);
             entity.itemHandler.extractItem(1,1, false);
             entity.itemHandler.extractItem(2,1, false);
@@ -233,10 +246,28 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             entity.itemHandler.extractItem(8,1, false);
 
 
-            inventory.getItem(9).is(match.get().getResultItem().getItem());
+            inventory.getItem(9).is(shapedMatch.get().getResultItem().getItem());
 
-                entity.itemHandler.setStackInSlot(9, new ItemStack(match.get().getResultItem().getItem(),
-                        entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(match.get().getResultItem())));
+            entity.itemHandler.setStackInSlot(9, new ItemStack(shapedMatch.get().getResultItem().getItem(),
+                    entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(shapedMatch.get().getResultItem())));
+
+            entity.resetProgress();
+        } else if (recipeMatch.isPresent()) {
+            entity.itemHandler.extractItem(0,1, false);
+            entity.itemHandler.extractItem(1,1, false);
+            entity.itemHandler.extractItem(2,1, false);
+            entity.itemHandler.extractItem(3,1, false);
+            entity.itemHandler.extractItem(4,1, false);
+            entity.itemHandler.extractItem(5,1, false);
+            entity.itemHandler.extractItem(6,1, false);
+            entity.itemHandler.extractItem(7,1, false);
+            entity.itemHandler.extractItem(8,1, false);
+
+
+            inventory.getItem(9).is(recipeMatch.get().getResultItem().getItem());
+
+            entity.itemHandler.setStackInSlot(9, new ItemStack(recipeMatch.get().getResultItem().getItem(),
+                    entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(recipeMatch.get().getResultItem())));
 
             entity.resetProgress();
         }

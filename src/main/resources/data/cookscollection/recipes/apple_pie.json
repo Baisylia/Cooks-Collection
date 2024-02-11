@@ -1,0 +1,36 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 72,
+  "ingredients": [
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:wheat"
+    },
+	{
+      "item": "minecraft:wheat"
+    },
+	{
+      "item": "minecraft:apple"
+    },
+	{
+      "item": "minecraft:apple"
+    },
+	{
+      "item": "minecraft:apple"
+    },
+	{
+      "item": "minecraft:sugar"
+    },
+	{
+      "item": "farmersdelight:pie_crust"
+    },
+	{
+      "item": "minecraft:sugar"
+    }
+  ],
+  "result": {
+    "item": "farmersdelight:apple_pie"
+  }
+}

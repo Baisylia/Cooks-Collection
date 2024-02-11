@@ -2,6 +2,7 @@ package com.ncpbails.cookscollection.integration;
 
 import com.ncpbails.cookscollection.CooksCollection;
 import com.ncpbails.cookscollection.recipe.OvenRecipe;
+import com.ncpbails.cookscollection.recipe.OvenShapedRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
@@ -19,6 +20,9 @@ public class JEICooksCollectionPlugin implements IModPlugin {
     public static RecipeType<OvenRecipe> BAKING_TYPE =
             new RecipeType<>(OvenRecipeCategory.UID, OvenRecipe.class);
 
+    public static RecipeType<OvenShapedRecipe> BAKING_SHAPED_TYPE =
+            new RecipeType<>(OvenShapedRecipeCategory.UID, OvenShapedRecipe.class);
+
     @Override
     public ResourceLocation getPluginUid() {
         return new ResourceLocation(CooksCollection.MOD_ID, "jei_plugin");
@@ -26,8 +30,10 @@ public class JEICooksCollectionPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new
-                OvenRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(
+                new OvenRecipeCategory(registration.getJeiHelpers().getGuiHelper()),
+                new OvenShapedRecipeCategory(registration.getJeiHelpers().getGuiHelper())
+        );
     }
 
     @Override
@@ -36,5 +42,8 @@ public class JEICooksCollectionPlugin implements IModPlugin {
 
         List<OvenRecipe> recipes = rm.getAllRecipesFor(OvenRecipe.Type.INSTANCE);
         registration.addRecipes(BAKING_TYPE, recipes);
+
+        List<OvenShapedRecipe> recipesShaped = rm.getAllRecipesFor(OvenShapedRecipe.Type.INSTANCE);
+        registration.addRecipes(BAKING_SHAPED_TYPE, recipesShaped);
     }
 }

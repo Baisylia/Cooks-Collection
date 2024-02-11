@@ -16,6 +16,9 @@ public class ModRecipes {
     public static final RegistryObject<RecipeSerializer<OvenRecipe>> BAKING_SERIALIZER =
             SERIALIZERS.register("baking", () -> OvenRecipe.Serializer.INSTANCE);
 
+    public static final RegistryObject<RecipeSerializer<OvenShapedRecipe>> BAKING_SHAPED_SERIALIZER =
+            SERIALIZERS.register("baking_shaped", () -> OvenShapedRecipe.Serializer.INSTANCE);
+
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);
