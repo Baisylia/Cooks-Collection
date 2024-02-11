@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.ncpbails.cookscollection.CooksCollection;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -24,53 +25,13 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
-    //private final boolean isSimple;
+    private final boolean isSimple;
 
     public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
-        //this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
-    }
-
-    @Override
-    public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        StackedContents stackedcontents = new StackedContents();
-        List<ItemStack> inputs = new java.util.ArrayList<>();
-        int i = 0;
-
-        for(int j = 0; j < 9; ++j) {
-            ItemStack itemstack = pContainer.getItem(j);
-            if (!itemstack.isEmpty()) {
-                ++i;
-                inputs.add(itemstack);
-            }
-            stackedcontents.accountStack(itemstack, 1);
-        }
-            //return i >= this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, null) :
-                //RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
-
-            return i >= this.recipeItems.size() && RecipeMatcher.findMatches(inputs, this.recipeItems) != null;
-    }
-
-    @Override
-    public NonNullList<Ingredient> getIngredients() {
-        return recipeItems;
-    }
-
-    @Override
-    public ItemStack assemble(SimpleContainer p_44001_) {
-        return output;
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int p_43999_, int p_44000_) {
-        return true;
-    }
-
-    @Override
-    public ItemStack getResultItem() {
-        return output.copy();
+        this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
     }
 
     @Override
@@ -84,6 +45,49 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
+    public ItemStack getResultItem() {
+        return output.copy();
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return recipeItems;
+    }
+
+    @Override
+    public boolean matches(SimpleContainer pContainer, Level pLevel) {
+        StackedContents stackedcontents = new StackedContents();
+        List<ItemStack> inputs = new java.util.ArrayList<>();
+        int i = 0;
+
+        for(int j = 0; j < 9; ++j) {
+            ItemStack itemstack = pContainer.getItem(j);
+            if (!itemstack.isEmpty()) {
+                ++i;
+                if (isSimple)
+                    stackedcontents.accountStack(itemstack, 1);
+                else inputs.add(itemstack);
+            }
+            //stackedcontents.accountStack(itemstack, 1);
+        }
+            //return i >= this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, null) :
+                //RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
+
+            //return i >= this.recipeItems.size() && RecipeMatcher.findMatches(inputs, this.recipeItems) != null;
+        return i == this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, (IntList)null) : RecipeMatcher.findMatches(inputs,  this.recipeItems) != null);
+    }
+
+    @Override
+    public ItemStack assemble(SimpleContainer p_44001_) {
+        return output;
+    }
+
+    @Override
+    public boolean canCraftInDimensions(int p_43999_, int p_44000_) {
+        return true;
+    }
+
+    @Override
     public RecipeType<?> getType() {
         return Type.INSTANCE;
     }
@@ -94,58 +98,57 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
         public static final String ID = "baking";
     }
 
-    public static class Serializer implements RecipeSerializer<OvenRecipe> {
+
+   public static class Serializer implements RecipeSerializer<OvenRecipe> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final ResourceLocation ID =
-                new ResourceLocation(CooksCollection.MOD_ID,"baking");
-
-        @Override
-        public OvenRecipe fromJson(ResourceLocation id, JsonObject json) {
-            NonNullList<Ingredient> inputs = readIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
+        private static final ResourceLocation NAME = new ResourceLocation("cookscollection", "baking");
+        public OvenRecipe fromJson(ResourceLocation p_44290_, JsonObject p_44291_) {
+            NonNullList<Ingredient> inputs = itemsFromJson(GsonHelper.getAsJsonArray(p_44291_, "ingredients"));
             if (inputs.isEmpty()) {
-                throw new JsonParseException("No ingredients for cooking recipe");
+                throw new JsonParseException("No ingredients for baking recipe");
             } else if (inputs.size() > 9) {
-                throw new JsonParseException("Too many ingredients for cooking recipe! The max is 9");
+                throw new JsonParseException("Too many ingredients for baking recipe. The maximum is 9");
             } else {
-                ItemStack output = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "output"), true);
-
-                //int cookTimeIn = GsonHelper.getAsInt(json, "cookingtime", 200);
-                return new OvenRecipe(id, output, inputs);
+                ItemStack itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(p_44291_, "result"));
+                return new OvenRecipe(p_44290_, itemstack, inputs);
             }
         }
 
-        private static NonNullList<Ingredient> readIngredients(JsonArray ingredientArray) {
+
+        private static NonNullList<Ingredient> itemsFromJson(JsonArray ingredientArray) {
             NonNullList<Ingredient> nonnulllist = NonNullList.create();
 
             for(int i = 0; i < ingredientArray.size(); ++i) {
                 Ingredient ingredient = Ingredient.fromJson(ingredientArray.get(i));
-                if (!ingredient.isEmpty()) {
+                if (true || !ingredient.isEmpty()) {
                     nonnulllist.add(ingredient);
                 }
             }
-
             return nonnulllist;
         }
+       @Override
+       public OvenRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
+           String s = buf.readUtf();
+           int i = buf.readVarInt();
+           NonNullList<Ingredient> inputs = NonNullList.withSize(i, Ingredient.EMPTY);
 
-        @Override
-        public OvenRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-            NonNullList<Ingredient> inputs = NonNullList.withSize(buf.readInt(), Ingredient.EMPTY);
+           for(int j = 0; j < inputs.size(); ++j) {
+               inputs.set(j, Ingredient.fromNetwork(buf));
+           }
 
-            for (int i = 0; i < inputs.size(); i++) {
-                inputs.set(i, Ingredient.fromNetwork(buf));
-            }
+           ItemStack itemstack = buf.readItem();
+           return new OvenRecipe(id, itemstack, inputs);
+       }
 
-            ItemStack output = buf.readItem();
-            return new OvenRecipe(id, output, inputs);
-        }
+       @Override
+       public void toNetwork(FriendlyByteBuf buf, OvenRecipe recipe) {
+           buf.writeVarInt(recipe.recipeItems.size());
 
-        @Override
-        public void toNetwork(FriendlyByteBuf buf, OvenRecipe recipe) {
-            buf.writeInt(recipe.getIngredients().size());
-            for (Ingredient ing : recipe.getIngredients()) {
-                ing.toNetwork(buf);
-            }
-            buf.writeItemStack(recipe.getResultItem(), false);
-        }
+           for(Ingredient ingredient : recipe.getIngredients()) {
+               ingredient.toNetwork(buf);
+           }
+
+           buf.writeItem(recipe.getResultItem());
+       }
     }
 }
