@@ -51,16 +51,19 @@ public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecip
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, OvenShapedRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 30, 19).addIngredients(recipe.getIngredients().get(0));
-        builder.addSlot(RecipeIngredientRole.INPUT, 48, 19).addIngredients(recipe.getIngredients().get(1));
-        builder.addSlot(RecipeIngredientRole.INPUT, 66, 19).addIngredients(recipe.getIngredients().get(2));
-        builder.addSlot(RecipeIngredientRole.INPUT, 30, 37).addIngredients(recipe.getIngredients().get(3));
-        builder.addSlot(RecipeIngredientRole.INPUT, 48, 37).addIngredients(recipe.getIngredients().get(4));
-        builder.addSlot(RecipeIngredientRole.INPUT, 66, 37).addIngredients(recipe.getIngredients().get(5));
-        builder.addSlot(RecipeIngredientRole.INPUT, 30, 55).addIngredients(recipe.getIngredients().get(6));
-        builder.addSlot(RecipeIngredientRole.INPUT, 48, 55).addIngredients(recipe.getIngredients().get(7));
-        builder.addSlot(RecipeIngredientRole.INPUT, 66, 55).addIngredients(recipe.getIngredients().get(8));
+        int startX = 30;
+        int startY = 19;
+        int index = 0;
 
+        for (int y = 0; y < recipe.getHeight(); y++) {
+            for (int x = 0; x < recipe.getWidth(); x++) {
+                builder.addSlot(RecipeIngredientRole.INPUT, startX + x * 18, startY + y * 18)
+                        .addIngredients(recipe.getIngredients().get(index));
+                index++;
+            }
+        }
+
+        // Add output slot
         builder.addSlot(RecipeIngredientRole.OUTPUT, 124, 37).addItemStack(recipe.getResultItem());
     }
 }

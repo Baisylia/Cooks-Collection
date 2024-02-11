@@ -25,13 +25,24 @@ import java.util.Map;
 import java.util.Set;
 
 public class OvenShapedRecipe implements Recipe<SimpleContainer> {
+    static int MAX_WIDTH = 3;
+    static int MAX_HEIGHT = 3;
+    public static void setCraftingSize(int width, int height) {
+        if (MAX_WIDTH < width) MAX_WIDTH = width;
+        if (MAX_HEIGHT < height) MAX_HEIGHT = height;
+    }
+
+    final int width;
+    final int height;
 
     private final ResourceLocation id;
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
     private final int cookTime;
     private final boolean isSimple;
-    public OvenShapedRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime) {
+    public OvenShapedRecipe(int width, int height, ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime) {
+        this.width = width;
+        this.height = height;
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
@@ -64,13 +75,20 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
     }
 
     public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        for(int i = 0; i <= 3 - 3; ++i) {
-            for(int j = 0; j <= 3 - 3; ++j) {
-                if (this.matches(pContainer, i, j, true)) {
-                    return true;
-                }
+        // Check if output slot is already occupied with a different item
+        ItemStack outputSlot = pContainer.getItem(9);
+        if (!outputSlot.isEmpty() && !ItemStack.isSame(this.getResultItem(), outputSlot)) {
+            return false;
+        }
 
-                if (this.matches(pContainer, i, j, false)) {
+        // Check if output slot is full
+        if (!outputSlot.isEmpty() && outputSlot.getCount() >= outputSlot.getMaxStackSize()) {
+            return false;
+        }
+
+        for(int i = 0; i <= pContainer.getContainerSize() - this.width; ++i) {
+            for(int j = 0; j <= pContainer.getContainerSize() - this.height; ++j) {
+                if (this.matches(pContainer, i, j)) {
                     return true;
                 }
             }
@@ -79,26 +97,15 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
         return false;
     }
 
-    private boolean matches(SimpleContainer pContainer, int numa, int numb, boolean booly) {
-        for(int i = 0; i < 3; ++i) {
-            for(int j = 0; j < 3; ++j) {
-                int k = i - numa;
-                int l = j - numb;
-                Ingredient ingredient = Ingredient.EMPTY;
-                if (k >= 0 && l >= 0 && k < 3 && l < 3) {
-                    if (booly) {
-                        ingredient = this.recipeItems.get(3 - k - 1 + l * 3);
-                    } else {
-                        ingredient = this.recipeItems.get(k + l * 3);
-                    }
-                }
-
-                if (!ingredient.test(pContainer.getItem(i + j * 3))) {
+    private boolean matches(SimpleContainer pContainer, int startX, int startY) {
+        for (int x = 0; x < this.width; x++) {
+            for (int y = 0; y < this.height; y++) {
+                Ingredient ingredient = this.recipeItems.get(x + y * this.width);
+                if (!ingredient.test(pContainer.getItem(startX + x + (startY + y) * 3))) {
                     return false;
                 }
             }
         }
-
         return true;
     }
 
@@ -108,7 +115,7 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
     }
 
     public int getWidth() {
-        return 3;
+        return this.width;
     }
 
     public int getRecipeWidth() {
@@ -116,7 +123,7 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
     }
 
     public int getHeight() {
-        return 3;
+        return this.height;
     }
 
     public int getRecipeHeight() {
@@ -227,15 +234,15 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
 
     static String[] patternFromJson(JsonArray p_44197_) {
         String[] astring = new String[p_44197_.size()];
-        if (astring.length > 3) {
-            throw new JsonSyntaxException("Invalid pattern: too many rows, " + 3 + " is maximum");
+        if (astring.length > MAX_HEIGHT) {
+            throw new JsonSyntaxException("Invalid pattern: too many rows, " + MAX_HEIGHT + " is maximum");
         } else if (astring.length == 0) {
             throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
         } else {
             for(int i = 0; i < astring.length; ++i) {
                 String s = GsonHelper.convertToString(p_44197_.get(i), "pattern[" + i + "]");
-                if (s.length() > 3) {
-                    throw new JsonSyntaxException("Invalid pattern: too many columns, " + 3 + " is maximum");
+                if (s.length() > MAX_WIDTH) {
+                    throw new JsonSyntaxException("Invalid pattern: too many columns, " + MAX_WIDTH + " is maximum");
                 }
 
                 if (i > 0 && astring[0].length() != s.length()) {
@@ -287,23 +294,23 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
     public static class Serializer implements RecipeSerializer<OvenShapedRecipe> {
         public static final Serializer INSTANCE = new Serializer();
         private static final ResourceLocation NAME = new ResourceLocation("cookscollection", "baking_shaped");
-        public OvenShapedRecipe fromJson(ResourceLocation p_44236_, JsonObject json) {
+        public OvenShapedRecipe fromJson(ResourceLocation id, JsonObject json) {
             Map<String, Ingredient> map = OvenShapedRecipe.keyFromJson(GsonHelper.getAsJsonObject(json, "key"));
             String[] astring = OvenShapedRecipe.shrink(OvenShapedRecipe.patternFromJson(GsonHelper.getAsJsonArray(json, "pattern")));
-            int i = astring[0].length();
-            int j = astring.length;
-            NonNullList<Ingredient> nonnulllist = OvenShapedRecipe.dissolvePattern(astring, map, i, j);
+            int width = astring[0].length();
+            int height = astring.length;
+            NonNullList<Ingredient> nonnulllist = OvenShapedRecipe.dissolvePattern(astring, map, width, height);
             ItemStack itemstack = OvenShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
             int cookTimeIn = GsonHelper.getAsInt(json, "cooktime", 200);
-            return new OvenShapedRecipe(p_44236_, itemstack, nonnulllist, cookTimeIn);
+            return new OvenShapedRecipe(width, height, id, itemstack, nonnulllist, cookTimeIn);
         }
 
         @Override
         public OvenShapedRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-            int i = buf.readVarInt();
-            int j = buf.readVarInt();
+            int width = buf.readVarInt();
+            int height = buf.readVarInt();
             String s = buf.readUtf();
-            NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i * j, Ingredient.EMPTY);
+            NonNullList<Ingredient> nonnulllist = NonNullList.withSize(width * height, Ingredient.EMPTY);
 
             for(int k = 0; k < nonnulllist.size(); ++k) {
                 nonnulllist.set(k, Ingredient.fromNetwork(buf));
@@ -311,11 +318,13 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
 
             ItemStack itemstack = buf.readItem();
             int cookTimeIn = buf.readVarInt();
-            return new OvenShapedRecipe(id, itemstack, nonnulllist, cookTimeIn);
+            return new OvenShapedRecipe(width, height, id, itemstack, nonnulllist, cookTimeIn);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buf, OvenShapedRecipe recipe) {
+            buf.writeVarInt(recipe.width);
+            buf.writeVarInt(recipe.height);
             for(Ingredient ingredient : recipe.recipeItems) {
                 ingredient.toNetwork(buf);
             }

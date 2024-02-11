@@ -1,5 +1,6 @@
 package com.ncpbails.cookscollection.block.entity.custom;
 
+import com.ncpbails.cookscollection.block.custom.OvenBlock;
 import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
 import com.ncpbails.cookscollection.recipe.OvenRecipe;
 import com.ncpbails.cookscollection.recipe.OvenShapedRecipe;
@@ -11,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -43,7 +45,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
     private int maxProgress = 72;
     private int litTime = 0;
     static int countOutput = 1;
-    private final ItemStackHandler itemHandler = new ItemStackHandler(10) {
+    private final ItemStackHandler itemHandler = new ItemStackHandler(11) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
@@ -151,7 +153,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             setChanged(pLevel, pPos, pState);
         }
 
-        if(hasRecipe(pBlockEntity, pPos)) {
+        if(hasRecipe(pBlockEntity)) {
             pBlockEntity.progress++;
             setChanged(pLevel, pPos, pState);
             if(pBlockEntity.progress > pBlockEntity.maxProgress) {
@@ -163,7 +165,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    private static boolean hasRecipe(OvenBlockEntity entity, BlockPos pos) {
+    private static boolean hasRecipe(OvenBlockEntity entity) {
         Level level = entity.level;
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
         for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
@@ -228,28 +230,17 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             for(int i = 0; i < 9; ++i) {
                 ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
                 if (slotStack.hasCraftingRemainingItem()) {
-                    Direction direction = ((Direction)entity.getBlockState().getValue(CookingPotBlock.FACING)).getCounterClockWise();
+                    Direction direction = ((Direction)entity.getBlockState().getValue(OvenBlock.FACING)).getCounterClockWise();
                     double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
                     double y = (double)entity.worldPosition.getY() + 0.7;
                     double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-                    ItemUtils.spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
-                }
-                if (!slotStack.isEmpty()) {
-                    slotStack.shrink(1);
+                    spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
                 }
             }
 
-            entity.itemHandler.extractItem(0,1, false);
-            entity.itemHandler.extractItem(1,1, false);
-            entity.itemHandler.extractItem(2,1, false);
-            entity.itemHandler.extractItem(3,1, false);
-            entity.itemHandler.extractItem(4,1, false);
-            entity.itemHandler.extractItem(5,1, false);
-            entity.itemHandler.extractItem(6,1, false);
-            entity.itemHandler.extractItem(7,1, false);
-            entity.itemHandler.extractItem(8,1, false);
-
-
+            for (int i = 0; i < 9; ++i) {
+                entity.itemHandler.extractItem(i, 1, false);
+            }
             inventory.getItem(9).is(shapedMatch.get().getResultItem().getItem());
 
             entity.itemHandler.setStackInSlot(9, new ItemStack(shapedMatch.get().getResultItem().getItem(),
@@ -261,28 +252,17 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             for(int i = 0; i < 9; ++i) {
                 ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
                 if (slotStack.hasCraftingRemainingItem()) {
-                    Direction direction = ((Direction)entity.getBlockState().getValue(CookingPotBlock.FACING)).getCounterClockWise();
+                    Direction direction = ((Direction)entity.getBlockState().getValue(OvenBlock.FACING)).getCounterClockWise();
                     double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
                     double y = (double)entity.worldPosition.getY() + 0.7;
                     double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-                    ItemUtils.spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
-                }
-                if (!slotStack.isEmpty()) {
-                    slotStack.shrink(1);
+                    spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
                 }
             }
 
-            entity.itemHandler.extractItem(0,1, false);
-            entity.itemHandler.extractItem(1,1, false);
-            entity.itemHandler.extractItem(2,1, false);
-            entity.itemHandler.extractItem(3,1, false);
-            entity.itemHandler.extractItem(4,1, false);
-            entity.itemHandler.extractItem(5,1, false);
-            entity.itemHandler.extractItem(6,1, false);
-            entity.itemHandler.extractItem(7,1, false);
-            entity.itemHandler.extractItem(8,1, false);
-
-
+            for (int i = 0; i < 9; ++i) {
+                entity.itemHandler.extractItem(i, 1, false);
+            }
             inventory.getItem(9).is(recipeMatch.get().getResultItem().getItem());
 
             entity.itemHandler.setStackInSlot(9, new ItemStack(recipeMatch.get().getResultItem().getItem(),
@@ -291,7 +271,11 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             entity.resetProgress();
         }
     }
-
+    public static void spawnItemEntity(Level level, ItemStack stack, double x, double y, double z, double xMotion, double yMotion, double zMotion) {
+        ItemEntity entity = new ItemEntity(level, x, y, z, stack);
+        entity.setDeltaMovement(xMotion, yMotion, zMotion);
+        level.addFreshEntity(entity);
+    }
     private int getTheCount (ItemStack itemIn)
     {
         return itemIn.getCount();

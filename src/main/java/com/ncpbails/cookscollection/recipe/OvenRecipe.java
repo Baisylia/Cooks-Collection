@@ -62,6 +62,16 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(SimpleContainer pContainer, Level pLevel) {
+        // Check if output slot is already occupied with a different item
+        ItemStack outputSlot = pContainer.getItem(9);
+        if (!outputSlot.isEmpty() && !ItemStack.isSame(this.getResultItem(), outputSlot)) {
+            return false;
+        }
+
+        // Check if output slot is full
+        if (!outputSlot.isEmpty() && outputSlot.getCount() >= outputSlot.getMaxStackSize()) {
+            return false;
+        }
         StackedContents stackedcontents = new StackedContents();
         List<ItemStack> inputs = new java.util.ArrayList<>();
         int i = 0;
