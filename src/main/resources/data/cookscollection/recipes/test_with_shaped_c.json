@@ -1,0 +1,20 @@
+{
+  "type": "cookscollection:baking_shaped",
+  "cooktime": 72,
+  "key": {
+    "#": {
+      "item": "minecraft:diamond"
+    },
+    "X": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "pattern": [
+    "XX#",
+    "XX#",
+    "XX#"
+  ],
+  "result": {
+    "item": "minecraft:iron_ingot"
+  }
+}
