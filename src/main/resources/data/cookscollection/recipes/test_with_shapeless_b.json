@@ -1,5 +1,6 @@
 {
   "type": "cookscollection:baking",
+  "cooktime": 72,
   "ingredients": [
     {
       "item": "minecraft:iron_ingot"

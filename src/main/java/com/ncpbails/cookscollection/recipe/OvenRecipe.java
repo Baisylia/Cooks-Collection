@@ -25,12 +25,14 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
+    private final int cookTime;
     private final boolean isSimple;
 
-    public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems) {
+    public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
+        this.cookTime = cookTime;
         this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
     }
 
@@ -52,6 +54,10 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     @Override
     public NonNullList<Ingredient> getIngredients() {
         return recipeItems;
+    }
+
+    public int getCookTime() {
+        return this.cookTime;
     }
 
     @Override
@@ -102,15 +108,16 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
    public static class Serializer implements RecipeSerializer<OvenRecipe> {
         public static final Serializer INSTANCE = new Serializer();
         private static final ResourceLocation NAME = new ResourceLocation("cookscollection", "baking");
-        public OvenRecipe fromJson(ResourceLocation p_44290_, JsonObject p_44291_) {
-            NonNullList<Ingredient> inputs = itemsFromJson(GsonHelper.getAsJsonArray(p_44291_, "ingredients"));
+        public OvenRecipe fromJson(ResourceLocation resourceLocation, JsonObject json) {
+            NonNullList<Ingredient> inputs = itemsFromJson(GsonHelper.getAsJsonArray(json, "ingredients"));
             if (inputs.isEmpty()) {
                 throw new JsonParseException("No ingredients for baking recipe");
             } else if (inputs.size() > 9) {
                 throw new JsonParseException("Too many ingredients for baking recipe. The maximum is 9");
             } else {
-                ItemStack itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(p_44291_, "result"));
-                return new OvenRecipe(p_44290_, itemstack, inputs);
+                ItemStack itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
+                int cookTimeIn = GsonHelper.getAsInt(json, "cooktime", 200);
+                return new OvenRecipe(resourceLocation, itemstack, inputs, cookTimeIn);
             }
         }
 
@@ -137,7 +144,8 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
            }
 
            ItemStack itemstack = buf.readItem();
-           return new OvenRecipe(id, itemstack, inputs);
+           int cookTimeIn = buf.readVarInt();
+           return new OvenRecipe(id, itemstack, inputs, cookTimeIn);
        }
 
        @Override

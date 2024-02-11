@@ -1,7 +1,13 @@
 {
   "type": "cookscollection:baking",
-  "cooktime": 72,
+  "cooktime": 1000,
   "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
     {
       "item": "minecraft:diamond"
     },

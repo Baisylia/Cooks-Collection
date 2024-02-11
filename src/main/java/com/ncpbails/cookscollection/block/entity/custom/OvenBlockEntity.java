@@ -1,13 +1,19 @@
 package com.ncpbails.cookscollection.block.entity.custom;
 
+import com.google.common.collect.Lists;
 import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
 import com.ncpbails.cookscollection.item.ModItems;
 import com.ncpbails.cookscollection.recipe.OvenRecipe;
 import com.ncpbails.cookscollection.screen.OvenMenu;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -16,11 +22,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -28,9 +36,11 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
 import vectorwing.farmersdelight.common.tag.ModTags;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
 
 import static com.ncpbails.cookscollection.block.custom.OvenBlock.LIT;
@@ -115,6 +125,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         tag.put("inventory", itemHandler.serializeNBT());
         tag.putInt("oven.progress", progress);
         tag.putInt("oven.lit_time", litTime);
+        tag.putInt("oven.max_progress", maxProgress);
         super.saveAdditional(tag);
     }
 
@@ -124,6 +135,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         itemHandler.deserializeNBT(nbt.getCompound("inventory"));
         progress = nbt.getInt("oven.progress");
         litTime = nbt.getInt("oven.lit_time");
+        maxProgress = nbt.getInt("oven.max_progress");
     }
 
     public void drops() {
@@ -170,12 +182,12 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         Optional<OvenRecipe> match = level.getRecipeManager()
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
+        if(match.isPresent()) { entity.maxProgress = match.get().getCookTime();}
         return match.isPresent()
                 && isFueled(entity, pos, level) && (
                     inventory.getItem(9).isEmpty()
                             || inventory.getItem(9).is(match.get().getResultItem().getItem())
                                     && inventory.getItem(9).getMaxStackSize() > inventory.getItem(9).getCount()
-
                 );
     }
 
@@ -236,6 +248,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
     }
     private void resetProgress() {
         this.progress = 0;
+        this.maxProgress = 72;
     }
 }
 
