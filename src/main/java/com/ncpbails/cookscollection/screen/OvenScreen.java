@@ -28,10 +28,10 @@ public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
         this.blit(pPoseStack, x, y, 0, 0, imageWidth, imageHeight);
 
         if(menu.isCrafting()) {
-            blit(pPoseStack, x + 90, y + 37, 176, 14,  menu.getScaledProgress(), 17);
+            blit(pPoseStack, x + 90, y + 35, 176, 14,  menu.getScaledProgress(), 17);
         }
         if(menu.isFueled()) {
-            blit(pPoseStack, x + 93, y + 57, 176, 32, 17, 15);
+            blit(pPoseStack, x + 93, y + 55, 176, 32, 17, 15);
         }
     }
 

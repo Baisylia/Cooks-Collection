@@ -1,20 +1,13 @@
 package com.ncpbails.cookscollection.block.entity.custom;
 
-import com.google.common.collect.Lists;
 import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
-import com.ncpbails.cookscollection.item.ModItems;
 import com.ncpbails.cookscollection.recipe.OvenRecipe;
 import com.ncpbails.cookscollection.recipe.OvenShapedRecipe;
 import com.ncpbails.cookscollection.screen.OvenMenu;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -23,13 +16,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -37,11 +27,11 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
+import vectorwing.farmersdelight.common.block.CookingPotBlock;
 import vectorwing.farmersdelight.common.tag.ModTags;
+import vectorwing.farmersdelight.common.utility.ItemUtils;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Optional;
 
 import static com.ncpbails.cookscollection.block.custom.OvenBlock.LIT;
@@ -235,6 +225,20 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
         if (shapedMatch.isPresent()) {
+            for(int i = 0; i < 9; ++i) {
+                ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
+                if (slotStack.hasCraftingRemainingItem()) {
+                    Direction direction = ((Direction)entity.getBlockState().getValue(CookingPotBlock.FACING)).getCounterClockWise();
+                    double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
+                    double y = (double)entity.worldPosition.getY() + 0.7;
+                    double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
+                    ItemUtils.spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
+                }
+                if (!slotStack.isEmpty()) {
+                    slotStack.shrink(1);
+                }
+            }
+
             entity.itemHandler.extractItem(0,1, false);
             entity.itemHandler.extractItem(1,1, false);
             entity.itemHandler.extractItem(2,1, false);
@@ -252,7 +256,22 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
                     entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(shapedMatch.get().getResultItem())));
 
             entity.resetProgress();
+
         } else if (recipeMatch.isPresent()) {
+            for(int i = 0; i < 9; ++i) {
+                ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
+                if (slotStack.hasCraftingRemainingItem()) {
+                    Direction direction = ((Direction)entity.getBlockState().getValue(CookingPotBlock.FACING)).getCounterClockWise();
+                    double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
+                    double y = (double)entity.worldPosition.getY() + 0.7;
+                    double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
+                    ItemUtils.spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
+                }
+                if (!slotStack.isEmpty()) {
+                    slotStack.shrink(1);
+                }
+            }
+
             entity.itemHandler.extractItem(0,1, false);
             entity.itemHandler.extractItem(1,1, false);
             entity.itemHandler.extractItem(2,1, false);

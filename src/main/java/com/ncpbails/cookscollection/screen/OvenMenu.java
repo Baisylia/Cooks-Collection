@@ -36,16 +36,16 @@ public class OvenMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
-            this.addSlot(new SlotItemHandler(handler, 0, 30, 19));
-            this.addSlot(new SlotItemHandler(handler, 1, 48, 19));
-            this.addSlot(new SlotItemHandler(handler, 2, 66, 19));
-            this.addSlot(new SlotItemHandler(handler, 3, 30, 37));
-            this.addSlot(new SlotItemHandler(handler, 4, 48, 37));
-            this.addSlot(new SlotItemHandler(handler, 5, 66, 37));
-            this.addSlot(new SlotItemHandler(handler, 6, 30, 55));
-            this.addSlot(new SlotItemHandler(handler, 7, 48, 55));
-            this.addSlot(new SlotItemHandler(handler, 8, 66, 55));
-            this.addSlot(new ModResultSlot(handler, 9, 124, 37));
+            this.addSlot(new SlotItemHandler(handler, 0, 30, 17));
+            this.addSlot(new SlotItemHandler(handler, 1, 48, 17));
+            this.addSlot(new SlotItemHandler(handler, 2, 66, 17));
+            this.addSlot(new SlotItemHandler(handler, 3, 30, 35));
+            this.addSlot(new SlotItemHandler(handler, 4, 48, 35));
+            this.addSlot(new SlotItemHandler(handler, 5, 66, 35));
+            this.addSlot(new SlotItemHandler(handler, 6, 30, 53));
+            this.addSlot(new SlotItemHandler(handler, 7, 48, 53));
+            this.addSlot(new SlotItemHandler(handler, 8, 66, 53));
+            this.addSlot(new ModResultSlot(handler, 9, 124, 35));
         });
 
         addDataSlots(data);
