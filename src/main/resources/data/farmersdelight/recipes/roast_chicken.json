@@ -1,0 +1,36 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 1200,
+  "ingredients": [
+    {
+      "item": "farmersdelight:onion"
+    },
+    {
+      "tag": "forge:eggs"
+    },
+	{
+      "item": "minecraft:bread"
+    },
+	{
+		"item": "minecraft:carrot"
+	},
+	{
+		"item": "minecraft:chicken"
+	},
+	{
+		"item": "minecraft:potato"
+	},
+	{
+		"item": "minecraft:carrot"
+	},
+	{
+		"item": "minecraft:bowl"
+	},
+	{
+		"item": "minecraft:potato"
+	}
+  ],
+  "result": {
+    "item": "farmersdelight:roast_chicken_block"
+  }
+}

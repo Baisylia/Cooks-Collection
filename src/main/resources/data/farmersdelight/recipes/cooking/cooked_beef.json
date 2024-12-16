@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+      "item": "minecraft:beef"
+    },
+    {
+      "item": "minecraft:beef"
+    },
+	{
+      "item": "minecraft:beef"
+    }
+  ],
+  "result": {
+    "item": "minecraft:cooked_beef",
+	"count": 3
+  }
+}

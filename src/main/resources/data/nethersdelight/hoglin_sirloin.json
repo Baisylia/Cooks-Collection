@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+      "item": "nethersdelight:hoglin_loin"
+    },
+    {
+      "item": "nethersdelight:hoglin_loin"
+    },
+	{
+      "item": "nethersdelight:hoglin_loin"
+    }
+  ],
+  "result": {
+    "item": "nethersdelight:hoglin_sirloin",
+	"count": 3
+  }
+}

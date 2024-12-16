@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 200,
+  "ingredients": [
+    {
+		"item": "farmersdelight:wheat_dough"
+    },
+    {
+		"item": "minecraft:honey_bottle"
+    },
+	{
+		"item": "minecraft:sugar"
+	}
+  ],
+  "result": {
+    "item": "farmersdelight:honey_cookie",
+	"count": 8
+  }
+}

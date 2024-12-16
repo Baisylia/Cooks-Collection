@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+      "item": "minecraft:cod"
+    },
+    {
+      "item": "minecraft:cod"
+    },
+	{
+      "item": "minecraft:cod"
+    }
+  ],
+  "result": {
+    "item": "minecraft:cooked_cod",
+	"count": 3
+  }
+}

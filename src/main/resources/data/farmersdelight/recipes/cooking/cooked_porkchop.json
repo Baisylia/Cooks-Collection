@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+      "item": "minecraft:porkchop"
+    },
+    {
+      "item": "minecraft:porkchop"
+    },
+	{
+      "item": "minecraft:porkchop"
+    }
+  ],
+  "result": {
+    "item": "minecraft:cooked_porkchop",
+	"count": 3
+  }
+}

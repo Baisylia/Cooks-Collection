@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+      "item": "minecraft:mutton"
+    },
+    {
+      "item": "minecraft:mutton"
+    },
+	{
+      "item": "minecraft:mutton"
+    }
+  ],
+  "result": {
+    "item": "minecraft:cooked_mutton",
+	"count": 3
+  }
+}

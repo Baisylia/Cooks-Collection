@@ -1,0 +1,28 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 200,
+  "ingredients": [
+	{
+      "tag": "forge:milk"
+    },
+    {
+      "tag": "forge:milk"
+    },
+    {
+      "tag": "forge:milk"
+    },
+    {
+      "item": "farmersdelight:wheat_dough"
+    },
+    {
+      "item": "farmersdelight:wheat_dough"
+    },
+    {
+      "item": "farmersdelight:wheat_dough"
+    }
+  ],
+  "result": {
+    "item": "create:sweet_roll",
+	"count": 3
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 400,
+  "ingredients": [
+    {
+      "item": "farmersdelight:salmon_slice"
+    },
+    {
+      "item": "farmersdelight:salmon_slice"
+    },
+	{
+      "item": "farmersdelight:salmon_slice"
+    }
+  ],
+  "result": {
+    "item": "farmersdelight:cooked_salmon_slice",
+	"count": 3
+  }
+}

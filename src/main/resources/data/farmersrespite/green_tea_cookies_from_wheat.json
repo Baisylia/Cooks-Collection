@@ -1,0 +1,22 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 200,
+  "ingredients": [
+    {
+		"item": "minecraft:wheat"
+    },
+    {
+		"item": "minecraft:wheat"
+    },
+    {
+		"item": "farmersrespite:green_tea_leaves"
+    },
+	{
+		"item": "sugar"
+	}
+  ],
+  "result": {
+    "item": "farmersrespite:green_tea_cookie",
+	"count": 8
+  }
+}

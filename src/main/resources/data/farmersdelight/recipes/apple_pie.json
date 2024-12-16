@@ -1,6 +1,6 @@
 {
   "type": "cookscollection:baking",
-  "cooktime": 72,
+  "cooktime": 600,
   "ingredients": [
     {
       "item": "minecraft:wheat"

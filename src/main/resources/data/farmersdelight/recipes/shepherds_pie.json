@@ -1,0 +1,36 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 1200,
+  "ingredients": [
+    {
+      "item": "minecraft:potato"
+    },
+    {
+      "tag": "forge:milk"
+    },
+	{
+      "item": "minecraft:potato"
+    },
+	{
+		"tag": "forge:cooked_mutton"
+	},
+	{
+		"tag": "forge:cooked_mutton"
+	},
+	{
+		"tag": "forge:cooked_mutton"
+	},
+	{
+		"item": "farmersdelight:onion"
+	},
+	{
+		"item": "minecraft:bowl"
+	},
+	{
+		"item": "farmersdelight:onion"
+	}
+  ],
+  "result": {
+    "item": "farmersdelight:shepherds_pie_block"
+  }
+}

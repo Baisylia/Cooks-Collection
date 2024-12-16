@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 400,
+  "ingredients": [
+    {
+      "item": "farmersdelight:chicken_cuts"
+    },
+    {
+      "item": "farmersdelight:chicken_cuts"
+    },
+	{
+      "item": "farmersdelight:chicken_cuts"
+    }
+  ],
+  "result": {
+    "item": "farmersdelight:cooked_chicken_cuts",
+	"count": 3
+  }
+}

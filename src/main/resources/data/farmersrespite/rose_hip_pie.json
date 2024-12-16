@@ -1,0 +1,36 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+		"tag": "forge:milk"
+    },
+    {
+		"item": "minecraft:honey_bottle"
+    },
+    {
+		"tag": "forge:milk"
+    },
+	{
+		"item": "farmersrespite:rose_hips"
+	},
+	{
+		"item": "farmersrespite:rose_hips"
+	},
+	{
+		"item": "farmersrespite:rose_hips"
+	},
+	{
+		"item": "minecraft:sugar"
+	},
+	{
+		"item": "farmersdelight:pie_crust"
+	},
+	{
+		"item": "minecraft:sugar"
+	}
+  ],
+  "result": {
+    "item": "farmersrespite:rose_hip_pie"
+  }
+}

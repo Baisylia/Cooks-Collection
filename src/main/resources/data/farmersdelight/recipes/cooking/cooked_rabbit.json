@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+      "item": "minecraft:rabbit"
+    },
+    {
+      "item": "minecraft:rabbit"
+    },
+	{
+      "item": "minecraft:rabbit"
+    }
+  ],
+  "result": {
+    "item": "minecraft:cooked_rabbit",
+	"count": 3
+  }
+}

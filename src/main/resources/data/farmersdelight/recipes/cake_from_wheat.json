@@ -1,0 +1,36 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+		"tag": "forge:milk"
+    },
+    {
+		"item": "minecraft:sweet_berries"
+    },
+    {
+		"tag": "forge:milk"
+    },
+	{
+		"item": "minecraft:sugar"
+	},
+	{
+		"tag": "forge:eggs"
+	},
+	{
+		"item": "minecraft:sugar"
+	},
+	{
+		"item": "minecraft:wheat"
+	},
+	{
+		"item": "minecraft:wheat"
+	},
+	{
+		"item": "minecraft:wheat"
+	}
+  ],
+  "result": {
+    "item": "minecraft:cake"
+  }
+}

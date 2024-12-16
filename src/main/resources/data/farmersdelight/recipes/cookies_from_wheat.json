@@ -1,0 +1,22 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 200,
+  "ingredients": [
+    {
+		"item": "minecraft:wheat"
+    },
+    {
+		"item": "minecraft:wheat"
+    },
+    {
+		"item": "minecraft:cocoa_beans"
+    },
+	{
+		"item": "minecraft:sugar"
+	}
+  ],
+  "result": {
+    "item": "minecraft:cookie",
+	"count": 8
+  }
+}

@@ -78,7 +78,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> RUSTIC_LOAF = registerBlock("rustic_loaf",
             () -> new RusticLoafBlock(BlockBehaviour.Properties.copy(vectorwing.farmersdelight.common.registry.ModBlocks.APPLE_PIE.get()).noOcclusion(),
-                    vectorwing.farmersdelight.common.registry.ModItems.IRON_KNIFE, true), FarmersDelight.CREATIVE_TAB, false, 0);
+                    ModItems.RUSTIC_LOAF_SLICE), FarmersDelight.CREATIVE_TAB, false, 0);
 
     public static final RegistryObject<Block> SALTED_POINTED_DRIPSTONE = registerBlock("salted_pointed_dripstone",
             () -> new SaltedPointedDripstone(BlockBehaviour.Properties.copy(Blocks.POINTED_DRIPSTONE).noOcclusion()
@@ -91,7 +91,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> OVEN = registerBlock("oven",
             () -> new OvenBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_GRAY)
-                    .strength(5.0f, 6.0f).requiresCorrectToolForDrops()), CreativeModeTab.TAB_DECORATIONS, false, 0);
+                    .strength(5.0f, 6.0f).requiresCorrectToolForDrops()), FarmersDelight.CREATIVE_TAB, false, 0);
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab, Boolean isFuel, Integer fuelAmount) {

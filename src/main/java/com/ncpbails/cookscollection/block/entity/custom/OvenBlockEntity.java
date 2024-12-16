@@ -167,6 +167,13 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
     private static boolean hasRecipe(OvenBlockEntity entity) {
         Level level = entity.level;
+        BlockPos pos = entity.getBlockPos();
+
+        // Check if the oven is fueled (lit)
+        if (!isFueled(entity, pos, level)) {
+            return false;
+        }
+
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
         for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
@@ -191,6 +198,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         return false;
     }
 
+
     static boolean isFueled(OvenBlockEntity entity, BlockPos pos, Level level) {
         BlockState stateBelow = level.getBlockState(pos.below());
         if (stateBelow.hasProperty(BlockStateProperties.LIT) ? stateBelow.getValue(BlockStateProperties.LIT) : true) {
@@ -199,13 +207,11 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
                 return true;
             }
             else {
-                System.out.println("NOT FUELED");
                 level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(false)), 3);
                 return false;
             }
         }
         else {
-            System.out.println("NOT FUELED");
             level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(false)), 3);
             return false;
         }

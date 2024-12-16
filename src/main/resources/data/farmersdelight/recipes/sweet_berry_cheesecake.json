@@ -1,0 +1,36 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 200,
+  "ingredients": [
+    {
+		"item": "minecraft:sweet_berries"
+    },
+    {
+		"item": "minecraft:sweet_berries"
+    },
+    {
+		"item": "minecraft:sweet_berries"
+    },
+	{
+		"item": "minecraft:sweet_berries"
+	},
+	{
+		"item": "minecraft:sweet_berries"
+	},
+	{
+		"item": "minecraft:sweet_berries"
+	},
+	{
+		"tag": "forge:milk"
+	},
+	{
+		"item": "farmersdelight:pie_crust"
+	},
+	{
+		"tag": "forge:milk"
+	}
+  ],
+  "result": {
+    "item": "farmersdelight:sweet_berry_cheesecake"
+  }
+}

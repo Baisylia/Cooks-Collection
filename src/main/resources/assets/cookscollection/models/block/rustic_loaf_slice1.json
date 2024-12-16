@@ -1,0 +1,7 @@
+{
+  "parent": "cookscollection:block/loaf_slice1",
+  "textures": {
+    "texture": "cookscollection:block/rustic_loaf",
+    "particle": "cookscollection:block/rustic_loaf"
+  }
+}

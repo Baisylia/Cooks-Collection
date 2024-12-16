@@ -1,0 +1,36 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+		"item": "minecraft:cocoa_beans"
+    },
+    {
+		"item": "minecraft:cocoa_beans"
+    },
+    {
+		"item": "minecraft:cocoa_beans"
+    },
+	{
+		"tag": "forge:milk"
+	},
+	{
+		"tag": "forge:milk"
+	},
+	{
+		"tag": "forge:milk"
+	},
+	{
+		"item": "minecraft:sugar"
+	},
+	{
+		"item": "farmersdelight:pie_crust"
+	},
+	{
+		"item": "minecraft:sugar"
+	}
+  ],
+  "result": {
+    "item": "farmersdelight:chocolate_pie"
+  }
+}

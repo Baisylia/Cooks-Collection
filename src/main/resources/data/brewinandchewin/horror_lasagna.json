@@ -1,0 +1,27 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+      "item": "farmersdelight:raw_pasta"
+    },
+    {
+      "tag": "brewinandchewin:horror_lasagna_meats"
+    },
+	{
+      "item": "farmersdelight:tomato_sauce"
+    },
+	{
+      "item": "minecraft:beetroot"
+    },
+	{
+      "item": "brewinandchewin:scarlet_cheese_wedge"
+    },
+	{
+      "item": "minecraft:bowl"
+    }
+  ],
+  "result": {
+    "item": "brewinandchewin:horror_lasagna"
+  }
+}

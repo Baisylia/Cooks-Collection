@@ -1,0 +1,30 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:wheat"
+    },
+	{
+      "item": "minecraft:wheat"
+    },
+	{
+      "item": "farmersdelight:tomato_sauce"
+    },
+	{
+      "item": "farmersdelight:beef_patty"
+    },
+	{
+      "item": "minecraft:brown_mushroom"
+    },
+	{
+      "item": "brewinandchewin:flaxen_cheese_wedge"
+    }
+  ],
+  "result": {
+    "item": "farmersdelight:apple_pie"
+  }
+}

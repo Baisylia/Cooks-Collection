@@ -1,0 +1,19 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 400,
+  "ingredients": [
+    {
+      "item": "farmersdelight:bacon"
+    },
+    {
+      "item": "farmersdelight:bacon"
+    },
+	{
+      "item": "farmersdelight:bacon"
+    }
+  ],
+  "result": {
+    "item": "farmersdelight:cooked_bacon",
+	"count": 3
+  }
+}

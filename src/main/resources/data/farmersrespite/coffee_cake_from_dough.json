@@ -1,0 +1,27 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 600,
+  "ingredients": [
+    {
+		"item": "farmersrespite:coffee"
+    },
+	{
+		"tag": "forge:milk"
+	},
+	{
+		"tag": "forge:eggs"
+	},
+	{
+		"item": "minecraft:sugar"
+	},
+	{
+		"item": "farmersdelight:wheat_dough"
+	},
+	{
+		"item": "minecraft:sugar"
+	}
+  ],
+  "result": {
+    "item": "farmersrespite:coffee_cake"
+  }
+}
