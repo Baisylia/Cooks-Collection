@@ -9,6 +9,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import vectorwing.farmersdelight.FarmersDelight;
+import vectorwing.farmersdelight.common.item.DrinkableItem;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CooksCollection.MOD_ID);
@@ -36,7 +37,7 @@ public class ModItems {
             () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.FRIED_POTATO)));
 
     public static final RegistryObject<Item> LEMONADE = ITEMS.register("lemonade",
-            () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.LEMONADE)));
+            () -> new DrinkableItem(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.LEMONADE)));
 
     public static final RegistryObject<Item> RUSTIC_LOAF_SLICE = ITEMS.register("rustic_loaf_slice",
             () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.RUSTIC_LOAF_SLICE)));

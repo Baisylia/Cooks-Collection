@@ -58,6 +58,7 @@ public class CooksCollection
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SALTED_POINTED_DRIPSTONE.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.LEMON_SAPLING.get(), RenderType.cutoutMipped());
             MenuScreens.register(ModMenuTypes.OVEN_MENU.get(), OvenScreen::new);
         }
     }

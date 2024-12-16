@@ -37,27 +37,27 @@ public class ModBlocks {
     public static final RegistryObject<Block> LEMON_SAPLING = registerBlock("lemon_sapling",
             () -> new SaplingBlock(new LemonTreeGrower(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)), FarmersDelight.CREATIVE_TAB, true, 100);
     public static final RegistryObject<Block> LEMON_LOG = registerBlock("lemon_log",
-            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LOG)) {
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG)) {
                 @Override public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return true; }
                 @Override public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return 60; }
                 @Override public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return 30; }
                 @Override public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
                     if(context.getItemInHand().getItem() instanceof AxeItem) {
                         if(state.is(ModBlocks.LEMON_LOG.get())) {
-                            return Blocks.STRIPPED_JUNGLE_LOG.defaultBlockState().setValue(AXIS, state.getValue(AXIS));}}
+                            return Blocks.STRIPPED_OAK_LOG.defaultBlockState().setValue(AXIS, state.getValue(AXIS));}}
                     return super.getToolModifiedState(state, context, toolAction, simulate);}
 
             }, FarmersDelight.CREATIVE_TAB, true, 300);
 
     public static final RegistryObject<Block> LEMON_WOOD = registerBlock("lemon_wood",
-            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WOOD)) {
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_WOOD)) {
                 @Override public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return true; }
                 @Override public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return 60; }
                 @Override public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return 30; }
                 @Override public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
                     if(context.getItemInHand().getItem() instanceof AxeItem) {
                         if(state.is(ModBlocks.LEMON_WOOD.get())) {
-                            return Blocks.STRIPPED_JUNGLE_WOOD.defaultBlockState().setValue(AXIS, state.getValue(AXIS));}}
+                            return Blocks.STRIPPED_OAK_WOOD.defaultBlockState().setValue(AXIS, state.getValue(AXIS));}}
                     return super.getToolModifiedState(state, context, toolAction, simulate);}
 
             }, FarmersDelight.CREATIVE_TAB, true, 300);
@@ -80,10 +80,11 @@ public class ModBlocks {
             () -> new RusticLoafBlock(BlockBehaviour.Properties.copy(vectorwing.farmersdelight.common.registry.ModBlocks.APPLE_PIE.get()).noOcclusion(),
                     ModItems.RUSTIC_LOAF_SLICE), FarmersDelight.CREATIVE_TAB, false, 0);
 
-    public static final RegistryObject<Block> SALTED_POINTED_DRIPSTONE = registerBlock("salted_pointed_dripstone",
+    public static final RegistryObject<Block> SALTED_POINTED_DRIPSTONE = registerBlockWithoutBlockItem("salted_pointed_dripstone",
             () -> new SaltedPointedDripstone(BlockBehaviour.Properties.copy(Blocks.POINTED_DRIPSTONE).noOcclusion()
-                    .sound(SoundType.POINTED_DRIPSTONE).randomTicks().strength(1.5F, 3.0F).dynamicShape().offsetType(BlockBehaviour.OffsetType.XZ)),
-            FarmersDelight.CREATIVE_TAB, false, 0);
+                    .sound(SoundType.POINTED_DRIPSTONE).randomTicks().strength(1.5F, 3.0F).dynamicShape().offsetType(BlockBehaviour.OffsetType.XZ))
+    //,FarmersDelight.CREATIVE_TAB, false, 0
+    );
 
     public static final RegistryObject<Block> SALTED_DRIPSTONE_BLOCK = registerBlock("salted_dripstone_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK).noOcclusion()), FarmersDelight.CREATIVE_TAB, false, 0);
