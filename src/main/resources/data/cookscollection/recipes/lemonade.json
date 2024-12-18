@@ -1,0 +1,20 @@
+{
+  "type": "farmersdelight:cooking",
+  "cookingtime": 200,
+  "experience": 1.0,
+  "ingredients": [
+    {
+      "item": "cookscollection:lemon"
+    },
+    {
+      "item": "cookscollection:lemon"
+    },
+	{
+      "item": "minecraft:sugar"
+    }
+  ],
+  "recipe_book_tab": "drinks",
+  "result": {
+    "item": "cookscollection:lemonade"
+  }
+}

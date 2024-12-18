@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:glass_bottle"
+    },
+    {
+      "item": "cookscollection:sunflower_seeds"
+    },
+    {
+      "item": "cookscollection:sunflower_seeds"
+    },
+    {
+      "item": "cookscollection:sunflower_seeds"
+    },
+    {
+      "item": "cookscollection:sunflower_seeds"
+    }
+  ],
+  "result": {
+    "item": "cookscollection:cooking_oil"
+  }
+}

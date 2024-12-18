@@ -1,5 +1,6 @@
 package com.ncpbails.cookscollection.world.feature;
 
+import com.google.common.base.Suppliers;
 import com.ncpbails.cookscollection.CooksCollection;
 import com.ncpbails.cookscollection.block.ModBlocks;
 import com.ncpbails.cookscollection.block.custom.FruitingLeaves;
@@ -7,6 +8,7 @@ import com.ncpbails.cookscollection.world.feature.tree.LemonTrunkPlacer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.valueproviders.ConstantInt;
@@ -16,10 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.*;
 import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.AcaciaFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.BlobFoliagePlacer;
@@ -35,6 +34,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ModConfiguredFeatures {
     public static final DeferredRegister<ConfiguredFeature<?, ?>> CONFIGURED_FEATURES =
@@ -59,6 +59,14 @@ public class ModConfiguredFeatures {
                     new RandomFeatureConfiguration(List.of(new WeightedPlacedFeature(
                             ModPlacedFeatures.LEMON_CHECKED.getHolder().get(),
                             0.5F)), ModPlacedFeatures.LEMON_CHECKED.getHolder().get())));
+
+
+    public static final Supplier<List<OreConfiguration.TargetBlockState>> OVERWORLD_SALT = Suppliers.memoize(() -> List.of(
+            OreConfiguration.target(OreFeatures.STONE_ORE_REPLACEABLES, ModBlocks.SALTED_DRIPSTONE_BLOCK.get().defaultBlockState()),
+            OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, ModBlocks.SALTED_DRIPSTONE_BLOCK.get().defaultBlockState())));
+
+    public static final RegistryObject<ConfiguredFeature<?, ?>> SALT = CONFIGURED_FEATURES.register("salt",
+            () -> new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(OVERWORLD_SALT.get(), 30)));
 
 
     public static void register(IEventBus eventBus) {

@@ -1,9 +1,9 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "minecraft:block/bricks",
+		"1": "cookscollection:block/oven_side",
 		"2": "cookscollection:block/oven_top",
-		"3": "minecraft:block/bricks",
+		"3": "minecraft:block/stone_bricks",
 		"4": "cookscollection:block/oven_front_lit",
 		"particle": "cookscollection:block/oven_front_lit"
 	},
