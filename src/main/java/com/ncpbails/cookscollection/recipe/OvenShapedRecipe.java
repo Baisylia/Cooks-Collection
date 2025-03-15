@@ -346,7 +346,7 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
         public OvenShapedRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
             int width = buf.readVarInt();
             int height = buf.readVarInt();
-            String s = buf.readUtf();
+            //String s = buf.readUtf();
             NonNullList<Ingredient> nonnulllist = NonNullList.withSize(width * height, Ingredient.EMPTY);
 
             for(int k = 0; k < nonnulllist.size(); ++k) {
@@ -367,6 +367,7 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
             }
 
             buf.writeItem(recipe.getResultItem());
+            buf.writeVarInt(recipe.cookTime);
         }
     }
 }

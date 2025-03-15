@@ -1,0 +1,17 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "cookscollection:rustic_loaf"
+    }
+  ],
+  "tool": {
+    "tag": "forge:tools/knives"
+  },
+  "result": [
+    {
+      "item": "cookscollection:rustic_loaf_slice",
+      "count": 4
+    }
+  ]
+}

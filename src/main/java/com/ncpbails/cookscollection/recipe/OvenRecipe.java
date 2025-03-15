@@ -145,7 +145,7 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
         }
        @Override
        public OvenRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-           String s = buf.readUtf();
+           //String s = buf.readUtf();
            int i = buf.readVarInt();
            NonNullList<Ingredient> inputs = NonNullList.withSize(i, Ingredient.EMPTY);
 
@@ -167,6 +167,7 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
            }
 
            buf.writeItem(recipe.getResultItem());
+           buf.writeVarInt(recipe.cookTime);
        }
     }
 }

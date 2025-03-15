@@ -47,7 +47,7 @@ public class ModConfiguredFeatures {
                             //new LemonTrunkPlacer(5, 2, 2),
                             new StraightTrunkPlacer(5, 2, 2),
                             new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(ModBlocks.LEMON_LEAVES.get().defaultBlockState(),
-                                    4).add(ModBlocks.FRUITING_LEMON_LEAVES.get().defaultBlockState().setValue(FruitingLeaves.AGE, 4), 1)),
+                                    8).add(ModBlocks.FRUITING_LEMON_LEAVES.get().defaultBlockState().setValue(FruitingLeaves.AGE, 4), 1)),
                             //new MegaJungleFoliagePlacer(ConstantInt.of(0), ConstantInt.of(0), 2),
                             new BlobFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0), 3),
                             //new DarkOakFoliagePlacer(ConstantInt.of(0), ConstantInt.of(2)),
