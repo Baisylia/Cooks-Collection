@@ -62,3 +62,10 @@ description="A Farmer's Delight addon containing various additions."
     versionRange="[1.19.2,1.20)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.cookscollection]]
+    modId="farmersdelight"
+    mandatory=true
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="[1.19.2-1.2.4,)"
+    ordering="AFTER"
+    side="BOTH"
