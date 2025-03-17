@@ -2,6 +2,7 @@ package com.ncpbails.cookscollection.item;
 
 import com.ncpbails.cookscollection.CooksCollection;
 import com.ncpbails.cookscollection.block.ModBlocks;
+import com.ncpbails.cookscollection.item.custom.BottleReturnerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -25,7 +26,7 @@ public class ModItems {
             () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB)));
 
     public static final RegistryObject<Item> COOKING_OIL = ITEMS.register("cooking_oil",
-            () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB)));
+            () -> new BottleReturnerItem(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB)));
 
     public static final RegistryObject<Item> CHOCOLATE_MUFFIN = ITEMS.register("chocolate_muffin",
             () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.CHOCOLATE_MUFFIN)));
