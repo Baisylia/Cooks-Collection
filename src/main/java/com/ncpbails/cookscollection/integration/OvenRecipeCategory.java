@@ -54,7 +54,7 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
     @Override
     public void draw(OvenRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack poseStack, double mouseX, double mouseY) {
         IDrawableAnimated arrow = getArrow(recipe);
-        arrow.draw(poseStack, 62, 19);
+        arrow.draw(poseStack, 63, 19);
         drawCookTime(recipe, poseStack, 45);
     }
 
