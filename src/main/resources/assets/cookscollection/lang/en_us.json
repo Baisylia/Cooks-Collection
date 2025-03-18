@@ -9,6 +9,9 @@
   "item.cookscollection.lemonade": "Lemonade",
   "item.cookscollection.rustic_loaf_slice": "Slice of Rustic Loaf",
 
+  "recipe.cookscollection.shapeless_baking": "Shapeless Baking",
+  "recipe.cookscollection.shaped_baking": "Shaped Baking",
+
   "block.cookscollection.oven": "Oven",
   "block.cookscollection.lemon_log": "Lemon Log",
   "block.cookscollection.lemon_wood": "Lemon Wood",

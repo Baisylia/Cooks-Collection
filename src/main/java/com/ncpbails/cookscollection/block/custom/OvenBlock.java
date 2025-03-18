@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class OvenBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static BooleanProperty LIT = BlockStateProperties.LIT;
+    public static BooleanProperty OPEN = BlockStateProperties.OPEN;
     public OvenBlock(Properties properties) {
         super(properties);
     }
@@ -34,7 +35,7 @@ public class OvenBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(LIT, Boolean.valueOf(false));
+        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(LIT, Boolean.FALSE).setValue(OPEN, false);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class OvenBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING, LIT);
+        pBuilder.add(FACING, LIT, OPEN);
     }
 
     /* BLOCK ENTITY */

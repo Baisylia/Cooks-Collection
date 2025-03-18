@@ -37,7 +37,7 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
 
     @Override
     public Component getTitle() {
-        return Component.literal("Shapeless Baking");
+        return Component.translatable("recipe.cookscollection.shapeless_baking");
     }
 
     @Override
