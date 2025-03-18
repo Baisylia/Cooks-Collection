@@ -4,6 +4,7 @@ import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
 import com.ncpbails.cookscollection.block.entity.custom.OvenBlockEntity;
 import com.ncpbails.cookscollection.client.ModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -56,9 +57,20 @@ public class OvenBlock extends BaseEntityBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource randomSource) {
         if (state.getValue(LIT)) {
+            double x = (double)pos.getX() + (double)0.5F;
+            double y = pos.getY();
+            double z = (double)pos.getZ() + (double)0.5F;
             if (randomSource.nextInt(10) == 0) {
                 level.playLocalSound((double)pos.getX() + (double)0.5F, (double)pos.getY() + (double)0.5F, (double)pos.getZ() + (double)0.5F, ModSounds.OVEN_CRACKLE.get(), SoundSource.BLOCKS, 0.5F + randomSource.nextFloat(), randomSource.nextFloat() * 0.7F + 0.6F, false);
             }
+            Direction direction = state.getValue(FACING);
+            Direction.Axis axis = direction.getAxis();
+            double r1 = randomSource.nextDouble() * 0.6 - 0.3;
+            double r2 = axis == Direction.Axis.X ? (double)direction.getStepX() * 0.52 : r1;
+            double r3 = randomSource.nextDouble() * (double)6.0F / (double)16.0F;
+            double r4 = axis == Direction.Axis.Z ? (double)direction.getStepZ() * 0.52 : r1;
+            level.addParticle(ParticleTypes.SMOKE, x + r2, y + r3, z + r4, 0.0F, 0.0F, 0.0F);
+            level.addParticle(ParticleTypes.FLAME, x + r2, y + r3, z + r4, 0.0, 0.0F, 0.0F);
         }
     }
 

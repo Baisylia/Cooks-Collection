@@ -3,7 +3,7 @@
 	"subtitle": "cookscollection.subtitles.oven.crackle",
 	"sounds": [
 	  {
-		"name": "block.campfire.crackle",
+		"name": "block.furnace.fire_crackle",
 		"type": "event"
 	  }
 	]
