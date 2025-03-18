@@ -26,7 +26,7 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
     private final IDrawable icon;
 
     public OvenRecipeCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, 0, 0, 176, 85);
+        this.background = helper.createDrawable(TEXTURE, 0, 0, 124, 58);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.OVEN.get()));
     }
 
@@ -52,24 +52,27 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, OvenRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 30, 19).addIngredients(recipe.getIngredients().get(0));
+        int start = 3;
+        int offset = 18;
+        int offset2 = offset+offset;
+        builder.addSlot(RecipeIngredientRole.INPUT, start, start).addIngredients(recipe.getIngredients().get(0));
         if (recipe.getIngredients().size() > 1) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 48, 19).addIngredients(recipe.getIngredients().get(1));
+            builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start).addIngredients(recipe.getIngredients().get(1));
             if (recipe.getIngredients().size() > 2) {
-                builder.addSlot(RecipeIngredientRole.INPUT, 66, 19).addIngredients(recipe.getIngredients().get(2));
+                builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start).addIngredients(recipe.getIngredients().get(2));
                 if (recipe.getIngredients().size() > 3) {
-                    builder.addSlot(RecipeIngredientRole.INPUT, 30, 37).addIngredients(recipe.getIngredients().get(3));
+                    builder.addSlot(RecipeIngredientRole.INPUT, start, start+offset).addIngredients(recipe.getIngredients().get(3));
                     if (recipe.getIngredients().size() > 4) {
-                        builder.addSlot(RecipeIngredientRole.INPUT, 48, 37).addIngredients(recipe.getIngredients().get(4));
+                        builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start+offset).addIngredients(recipe.getIngredients().get(4));
                         if (recipe.getIngredients().size() > 5) {
-                            builder.addSlot(RecipeIngredientRole.INPUT, 66, 37).addIngredients(recipe.getIngredients().get(5));
+                            builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start+offset).addIngredients(recipe.getIngredients().get(5));
                             if (recipe.getIngredients().size() > 6) {
-                                builder.addSlot(RecipeIngredientRole.INPUT, 30, 55).addIngredients(recipe.getIngredients().get(6));
+                                builder.addSlot(RecipeIngredientRole.INPUT, start, start+offset2).addIngredients(recipe.getIngredients().get(6));
                                 if (recipe.getIngredients().size() > 7) {
-                                    builder.addSlot(RecipeIngredientRole.INPUT, 48, 55).addIngredients(recipe.getIngredients().get(7));
+                                    builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start+offset2).addIngredients(recipe.getIngredients().get(7));
                                     if (recipe.getIngredients().size() > 8) {
-                                        builder.addSlot(RecipeIngredientRole.INPUT, 66, 55).addIngredients(recipe.getIngredients().get(8));
+                                        builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start+offset2).addIngredients(recipe.getIngredients().get(8));
         }}}}}}}}
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 124, 37).addItemStack(recipe.getResultItem());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 97, 21).addItemStack(recipe.getResultItem());
     }
 }

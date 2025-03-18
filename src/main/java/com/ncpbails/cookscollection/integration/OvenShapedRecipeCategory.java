@@ -25,7 +25,7 @@ public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecip
     private final IDrawable icon;
 
     public OvenShapedRecipeCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, 0, 0, 176, 85);
+        this.background = helper.createDrawable(TEXTURE, 0, 0, 124, 58);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.OVEN.get()));
     }
 
@@ -51,19 +51,18 @@ public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecip
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, OvenShapedRecipe recipe, IFocusGroup focuses) {
-        int startX = 30;
-        int startY = 19;
+        int start = 3;
         int index = 0;
 
         for (int y = 0; y < recipe.getHeight(); y++) {
             for (int x = 0; x < recipe.getWidth(); x++) {
-                builder.addSlot(RecipeIngredientRole.INPUT, startX + x * 18, startY + y * 18)
+                builder.addSlot(RecipeIngredientRole.INPUT, start + x * 18, start + y * 18)
                         .addIngredients(recipe.getIngredients().get(index));
                 index++;
             }
         }
 
         // Add output slot
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 124, 37).addItemStack(recipe.getResultItem());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 97, 21).addItemStack(recipe.getResultItem());
     }
 }
