@@ -24,5 +24,8 @@
   "block.cookscollection.lemon_sapling": "Lemon Sapling",
   "block.cookscollection.lemon_crate": "Lemon Crate",
   "block.cookscollection.rustic_loaf": "Rustic Loaf",
-  "block.cookscollection.salted_dripstone_block": "Salt Block"
+  "block.cookscollection.salted_dripstone_block": "Salt Block",
+
+  "container.cookscollection.oven.heated": "Heated",
+  "container.cookscollection.oven.not_heated": "Needs heat from below"
 }
