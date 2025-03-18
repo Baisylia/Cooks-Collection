@@ -15,7 +15,7 @@
           "condition": "minecraft:block_state_property",
           "block": "cookscollection:rustic_loaf",
           "properties": {
-            "servings": "8"
+            "bites": "8"
           }
         }
       ]
@@ -36,7 +36,7 @@
             "condition": "minecraft:block_state_property",
             "block": "cookscollection:rustic_loaf",
             "properties": {
-              "servings": "8"
+              "bites": "8"
             }
           }
         }
