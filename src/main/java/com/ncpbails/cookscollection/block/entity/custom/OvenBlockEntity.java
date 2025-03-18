@@ -2,6 +2,7 @@ package com.ncpbails.cookscollection.block.entity.custom;
 
 import com.ncpbails.cookscollection.block.custom.OvenBlock;
 import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
+import com.ncpbails.cookscollection.client.ModSounds;
 import com.ncpbails.cookscollection.recipe.OvenRecipe;
 import com.ncpbails.cookscollection.recipe.OvenShapedRecipe;
 import com.ncpbails.cookscollection.screen.OvenMenu;
@@ -11,7 +12,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -23,8 +23,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BarrelBlock;
-import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -87,12 +85,12 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         };
         this.openersCounter = new ContainerOpenersCounter() {
             protected void onOpen(Level level, BlockPos pos, BlockState state) {
-                OvenBlockEntity.this.playSound(state, SoundEvents.BARREL_OPEN);
+                OvenBlockEntity.this.playSound(state, ModSounds.OVEN_OPEN.get());
                 OvenBlockEntity.this.updateBlockState(state, true);
             }
 
             protected void onClose(Level level, BlockPos pos, BlockState state) {
-                OvenBlockEntity.this.playSound(state, SoundEvents.BARREL_CLOSE);
+                OvenBlockEntity.this.playSound(state, ModSounds.OVEN_CLOSE.get());
                 OvenBlockEntity.this.updateBlockState(state, false);
             }
 
@@ -342,7 +340,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     void updateBlockState(BlockState state, boolean open) {
-        this.level.setBlock(this.getBlockPos(), state.setValue(BarrelBlock.OPEN, open), 3);
+        this.level.setBlock(this.getBlockPos(), state.setValue(OvenBlock.OPEN, open), 3);
     }
 
     void playSound(BlockState state, SoundEvent sound) {

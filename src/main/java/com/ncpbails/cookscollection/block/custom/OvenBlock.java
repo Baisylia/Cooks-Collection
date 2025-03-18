@@ -2,8 +2,13 @@ package com.ncpbails.cookscollection.block.custom;
 
 import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
 import com.ncpbails.cookscollection.block.entity.custom.OvenBlockEntity;
+import com.ncpbails.cookscollection.client.ModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -49,6 +54,15 @@ public class OvenBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource randomSource) {
+        if (state.getValue(LIT)) {
+            if (randomSource.nextInt(10) == 0) {
+                level.playLocalSound((double)pos.getX() + (double)0.5F, (double)pos.getY() + (double)0.5F, (double)pos.getZ() + (double)0.5F, ModSounds.OVEN_CRACKLE.get(), SoundSource.BLOCKS, 0.5F + randomSource.nextFloat(), randomSource.nextFloat() * 0.7F + 0.6F, false);
+            }
+        }
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         pBuilder.add(FACING, LIT, OPEN);
     }
@@ -64,8 +78,8 @@ public class OvenBlock extends BaseEntityBlock {
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof OvenBlockEntity) {
-                ((OvenBlockEntity) blockEntity).drops();
+            if (blockEntity instanceof OvenBlockEntity ovenBlockEntity) {
+                ovenBlockEntity.drops();
             }
         }
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
@@ -76,8 +90,8 @@ public class OvenBlock extends BaseEntityBlock {
                                  Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            if(entity instanceof OvenBlockEntity) {
-                NetworkHooks.openScreen(((ServerPlayer)pPlayer), (OvenBlockEntity)entity, pPos);
+            if(entity instanceof OvenBlockEntity ovenBlockEntity) {
+                NetworkHooks.openScreen(((ServerPlayer)pPlayer), ovenBlockEntity, pPos);
             } else {
                 throw new IllegalStateException("Our Container provider is missing!");
             }

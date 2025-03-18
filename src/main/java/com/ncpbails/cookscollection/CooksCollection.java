@@ -3,6 +3,7 @@ package com.ncpbails.cookscollection;
 import com.mojang.logging.LogUtils;
 import com.ncpbails.cookscollection.block.ModBlocks;
 import com.ncpbails.cookscollection.block.entity.ModBlockEntities;
+import com.ncpbails.cookscollection.client.ModSounds;
 import com.ncpbails.cookscollection.item.ModItems;
 import com.ncpbails.cookscollection.recipe.ModRecipes;
 import com.ncpbails.cookscollection.screen.ModMenuTypes;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -41,6 +43,10 @@ public class CooksCollection
         ModPlacedFeatures.register(eventBus);
         ModMenuTypes.register(eventBus);
         ModRecipes.register(eventBus);
+
+        if (FMLEnvironment.dist.isClient()) {
+            ModSounds.register(eventBus);
+        }
 
         MinecraftForge.EVENT_BUS.register(this);
     }

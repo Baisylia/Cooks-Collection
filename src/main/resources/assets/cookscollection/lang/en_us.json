@@ -12,6 +12,10 @@
   "recipe.cookscollection.shapeless_baking": "Shapeless Baking",
   "recipe.cookscollection.shaped_baking": "Shaped Baking",
 
+  "cookscollection.subtitles.oven.crackle": "Oven crackles",
+  "cookscollection.subtitles.oven.open": "Oven opens",
+  "cookscollection.subtitles.oven.close": "Oven closes",
+
   "block.cookscollection.oven": "Oven",
   "block.cookscollection.lemon_log": "Lemon Log",
   "block.cookscollection.lemon_wood": "Lemon Wood",
