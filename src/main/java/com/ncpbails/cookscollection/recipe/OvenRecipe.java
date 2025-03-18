@@ -137,7 +137,7 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
             for(int i = 0; i < ingredientArray.size(); ++i) {
                 Ingredient ingredient = Ingredient.fromJson(ingredientArray.get(i));
-                if (true || !ingredient.isEmpty()) {
+                if (!ingredient.isEmpty()) {
                     nonnulllist.add(ingredient);
                 }
             }
