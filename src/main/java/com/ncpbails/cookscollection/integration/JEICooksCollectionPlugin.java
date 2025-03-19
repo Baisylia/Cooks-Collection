@@ -1,11 +1,13 @@
 package com.ncpbails.cookscollection.integration;
 
 import com.ncpbails.cookscollection.CooksCollection;
+import com.ncpbails.cookscollection.block.ModBlocks;
 import com.ncpbails.cookscollection.recipe.OvenRecipe;
 import com.ncpbails.cookscollection.recipe.OvenShapedRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
@@ -45,5 +47,12 @@ public class JEICooksCollectionPlugin implements IModPlugin {
 
         List<OvenShapedRecipe> recipesShaped = rm.getAllRecipesFor(OvenShapedRecipe.Type.INSTANCE);
         registration.addRecipes(BAKING_SHAPED_TYPE, recipesShaped);
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        var stack = ModBlocks.OVEN.get().asItem().getDefaultInstance();
+        registration.addRecipeCatalyst(stack, BAKING_SHAPED_TYPE);
+        registration.addRecipeCatalyst(stack, BAKING_TYPE);
     }
 }

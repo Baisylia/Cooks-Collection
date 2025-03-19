@@ -1,0 +1,29 @@
+{
+  "block.oven.crackle": {
+	"subtitle": "cookscollection.subtitles.oven.crackle",
+	"sounds": [
+	  {
+		"name": "block.furnace.fire_crackle",
+		"type": "event"
+	  }
+	]
+  },
+  "block.oven.open": {
+	"subtitle": "cookscollection.subtitles.oven.open",
+	"sounds": [
+	  "cookscollection:block/oven/open1",
+	  "cookscollection:block/oven/open2",
+	  "cookscollection:block/oven/open3",
+	  "cookscollection:block/oven/open4"
+	]
+  },
+  "block.oven.close": {
+	"subtitle": "cookscollection.subtitles.oven.close",
+	"sounds": [
+		"cookscollection:block/oven/close1",
+		"cookscollection:block/oven/close2",
+		"cookscollection:block/oven/close3",
+		"cookscollection:block/oven/close4"
+	]
+  }
+}

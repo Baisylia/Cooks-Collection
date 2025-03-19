@@ -174,7 +174,7 @@ dependencies {
     runtimeOnly(fg.deobf("mezz.jei:jei-1.19.2-forge:11.5.0.297"))
 
     runtimeOnly fg.deobf("curse.maven:appleskin-248787:3872808")
-    implementation fg.deobf("curse.maven:farmersdelight-398521:3999157")
+    implementation fg.deobf("curse.maven:farmersdelight-398521:5051241")
 
     // Examples using mod jars from ./libs
     // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")

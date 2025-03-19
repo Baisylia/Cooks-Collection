@@ -8,8 +8,14 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import vectorwing.farmersdelight.common.utility.TextUtils;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
+
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(CooksCollection.MOD_ID, "textures/gui/oven_gui.png");
 
@@ -33,6 +39,7 @@ public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
         if(menu.isFueled()) {
             blit(pPoseStack, x + 93, y + 55, 176, 32, 17, 15);
         }
+
     }
 
     @Override
@@ -40,6 +47,13 @@ public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
         renderBackground(pPoseStack);
         super.render(pPoseStack, mouseX, mouseY, delta);
         renderTooltip(pPoseStack, mouseX, mouseY);
+        if (this.isHovering(93, 55, 17, 15, mouseX, mouseY)) {
+            List<Component> tooltip = new ArrayList<>();
+            String key = "container.cookscollection.oven." + (this.menu.isFueled() ? "heated" : "not_heated");
+            tooltip.add(Component.translatable(key));
+            this.renderComponentTooltip(pPoseStack, tooltip, mouseX, mouseY);
+        }
+
     }
 
 

@@ -9,6 +9,13 @@
   "item.cookscollection.lemonade": "Lemonade",
   "item.cookscollection.rustic_loaf_slice": "Slice of Rustic Loaf",
 
+  "recipe.cookscollection.shapeless_baking": "Shapeless Baking",
+  "recipe.cookscollection.shaped_baking": "Shaped Baking",
+
+  "cookscollection.subtitles.oven.crackle": "Oven crackles",
+  "cookscollection.subtitles.oven.open": "Oven opens",
+  "cookscollection.subtitles.oven.close": "Oven closes",
+
   "block.cookscollection.oven": "Oven",
   "block.cookscollection.lemon_log": "Lemon Log",
   "block.cookscollection.lemon_wood": "Lemon Wood",
@@ -17,5 +24,8 @@
   "block.cookscollection.lemon_sapling": "Lemon Sapling",
   "block.cookscollection.lemon_crate": "Lemon Crate",
   "block.cookscollection.rustic_loaf": "Rustic Loaf",
-  "block.cookscollection.salted_dripstone_block": "Salt Block"
+  "block.cookscollection.salted_dripstone_block": "Salt Block",
+
+  "container.cookscollection.oven.heated": "Heated",
+  "container.cookscollection.oven.not_heated": "Needs heat from below"
 }
