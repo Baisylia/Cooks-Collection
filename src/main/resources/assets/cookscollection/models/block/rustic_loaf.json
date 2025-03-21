@@ -2,6 +2,6 @@
   "parent": "cookscollection:block/loaf",
   "textures": {
     "texture": "cookscollection:block/rustic_loaf",
-    "particle": "cookscollection:block/rustic_loaf"
+    "particle": "cookscollection:item/rustic_loaf"
   }
 }

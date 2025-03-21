@@ -29,7 +29,7 @@ displayName="Cook's Collection" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="icon.png" #optional
 # A text field displayed in the mod UI
-credits="Developer: Baisylia | Designer: Bagels" #optional
+credits="Developer: Baisylia | Designer: Bagels | Artist: Raspmary" #optional
 # A text field displayed in the mod UI
 authors="Baisylia, Bagels" #optional
 # Display Test controls the display for your mod in the server connection screen

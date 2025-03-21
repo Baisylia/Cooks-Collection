@@ -1,5 +1,5 @@
 {
-  "parent": "item/generated",
+  "parent": "farmersdelight:item/mug",
   "textures": {
     "layer0": "cookscollection:item/lemonade"
   }
