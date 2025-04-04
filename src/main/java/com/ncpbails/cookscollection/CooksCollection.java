@@ -43,10 +43,7 @@ public class CooksCollection
         ModPlacedFeatures.register(eventBus);
         ModMenuTypes.register(eventBus);
         ModRecipes.register(eventBus);
-
-        if (FMLEnvironment.dist.isClient()) {
-            ModSounds.register(eventBus);
-        }
+        ModSounds.register(eventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
