@@ -9,7 +9,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import vectorwing.farmersdelight.common.item.DrinkableItem;
 
-public class OilItem extends BottleReturnerItem {
+public class OilItem extends DrinkableItem {
     public OilItem(Properties properties) {
         super(properties);
     }

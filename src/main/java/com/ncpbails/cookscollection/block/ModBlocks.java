@@ -34,6 +34,12 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CooksCollection.MOD_ID);
 
 
+
+
+    public static final RegistryObject<Block> LEMON_CRATE = registerBlock("lemon_crate",
+            () -> new Block(BlockBehaviour.Properties.copy(vectorwing.farmersdelight.common.registry.ModBlocks.CARROT_CRATE.get()))
+            , FarmersDelight.CREATIVE_TAB, false, 0);
+
     public static final RegistryObject<Block> LEMON_SAPLING = registerBlock("lemon_sapling",
             () -> new SaplingBlock(new LemonTreeGrower(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)), FarmersDelight.CREATIVE_TAB, true, 100);
     public static final RegistryObject<Block> LEMON_LOG = registerBlock("lemon_log",

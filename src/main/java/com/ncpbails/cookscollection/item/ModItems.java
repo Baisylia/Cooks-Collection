@@ -7,15 +7,21 @@ import com.ncpbails.cookscollection.item.custom.OilItem;
 import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.item.DrinkableItem;
+import vectorwing.farmersdelight.common.item.HotCocoaItem;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CooksCollection.MOD_ID);
+
+    public static Item.Properties drinkItem() {
+        return (new Item.Properties()).craftRemainder(Items.GLASS_BOTTLE).stacksTo(16).tab(FarmersDelight.CREATIVE_TAB);
+    }
 
 
     public static final RegistryObject<Item> LEMON = ITEMS.register("lemon",
@@ -28,7 +34,7 @@ public class ModItems {
     //        () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB)));
 
     public static final RegistryObject<Item> COOKING_OIL = ITEMS.register("cooking_oil",
-            () -> new OilItem(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB)));
+            () -> new OilItem(drinkItem().food(ModFoods.COOKING_OIL)));
 
     public static final RegistryObject<Item> CHOCOLATE_MUFFIN = ITEMS.register("chocolate_muffin",
             () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.CHOCOLATE_MUFFIN)));
@@ -40,7 +46,7 @@ public class ModItems {
             () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.FRIED_POTATO)));
 
     public static final RegistryObject<Item> LEMONADE = ITEMS.register("lemonade",
-            () -> new BottleReturnerItem(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.LEMONADE)));
+            () -> new DrinkableItem(drinkItem().food(ModFoods.LEMONADE)));
 
     public static final RegistryObject<Item> RUSTIC_LOAF_SLICE = ITEMS.register("rustic_loaf_slice",
             () -> new Item(new Item.Properties().tab(FarmersDelight.CREATIVE_TAB).food(ModFoods.RUSTIC_LOAF_SLICE)));
