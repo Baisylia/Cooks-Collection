@@ -21,45 +21,37 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import com.ncpbails.cookscollection.item.ModCreativeTabs;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(CooksCollection.MOD_ID)
-public class CooksCollection
-{
-    // Define mod id in a common place for everything to reference
+public class CooksCollection {
     public static final String MOD_ID = "cookscollection";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public CooksCollection()
-    {
+    public CooksCollection() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModItems.register(eventBus);
         ModBlocks.register(eventBus);
         ModBlockEntities.register(eventBus);
-        ModConfiguredFeatures.register(eventBus);
-        ModPlacedFeatures.register(eventBus);
+//        ModConfiguredFeatures.register(eventBus);
+//        ModPlacedFeatures.register(eventBus);
         ModMenuTypes.register(eventBus);
         ModRecipes.register(eventBus);
         ModSounds.register(eventBus);
+        ModCreativeTabs.register(eventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
-
+    private void commonSetup(final FMLCommonSetupEvent event) {
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
+    public static class ClientModEvents {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
+        public static void onClientSetup(FMLClientSetupEvent event) {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SALTED_POINTED_DRIPSTONE.get(), RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LEMON_SAPLING.get(), RenderType.cutoutMipped());
             MenuScreens.register(ModMenuTypes.OVEN_MENU.get(), OvenScreen::new);

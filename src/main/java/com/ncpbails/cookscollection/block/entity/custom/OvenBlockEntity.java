@@ -36,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import vectorwing.farmersdelight.common.tag.ModTags;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 import static com.ncpbails.cookscollection.block.custom.OvenBlock.LIT;
@@ -72,10 +71,10 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             }
 
             public void set(int index, int value) {
-                switch(index) {
-                    case 0: OvenBlockEntity.this.progress = value; break;
-                    case 1: OvenBlockEntity.this.maxProgress = value; break;
-                    case 2: OvenBlockEntity.this.litTime = value; break;
+                switch (index) {
+                    case 0 -> OvenBlockEntity.this.progress = value;
+                    case 1 -> OvenBlockEntity.this.maxProgress = value;
+                    case 2 -> OvenBlockEntity.this.litTime = value;
                 }
             }
 
@@ -99,11 +98,10 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
             protected boolean isOwnContainer(Player player) {
                 if (player.containerMenu instanceof OvenMenu) {
-                    BlockEntity be = ((OvenMenu)player.containerMenu).getBlockEntity();
+                    BlockEntity be = ((OvenMenu) player.containerMenu).getBlockEntity();
                     return be == OvenBlockEntity.this;
-                } else {
-                    return false;
                 }
+                return false;
             }
         };
     }
@@ -119,13 +117,12 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         return new OvenMenu(pContainerId, pInventory, this, this.data);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @javax.annotation.Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return lazyItemHandler.cast();
         }
-
         return super.getCapability(cap, side);
     }
 
@@ -136,7 +133,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     @Override
-    public void invalidateCaps()  {
+    public void invalidateCaps() {
         super.invalidateCaps();
         lazyItemHandler.invalidate();
     }
@@ -164,10 +161,8 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             inventory.setItem(i, itemHandler.getStackInSlot(i));
         }
-
         Containers.dropContents(this.level, this.worldPosition, inventory);
     }
-
 
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, OvenBlockEntity pBlockEntity) {
         pBlockEntity.recheckOpen();
@@ -221,25 +216,21 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             entity.maxProgress = recipeMatch.get().getCookTime();
             return true;
         }
-
         return false;
     }
-
 
     static boolean isFueled(OvenBlockEntity entity, BlockPos pos, Level level) {
         BlockState stateBelow = level.getBlockState(pos.below());
         if (stateBelow.hasProperty(BlockStateProperties.LIT) ? stateBelow.getValue(BlockStateProperties.LIT) : true) {
             if (stateBelow.is(ModTags.HEAT_SOURCES) || stateBelow.is(ModTags.HEAT_CONDUCTORS)) {
-                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(true)), 3);
+                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.TRUE), 3);
                 return true;
-            }
-            else {
-                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(false)), 3);
+            } else {
+                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.FALSE), 3);
                 return false;
             }
-        }
-        else {
-            level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(false)), 3);
+        } else {
+            level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.FALSE), 3);
             return false;
         }
     }
@@ -251,68 +242,55 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        // Check for OvenShapedRecipe
+        // Check for OvenShapedRecipe or OvenRecipe
         Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
                 .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
-
-        // Check for OvenRecipe
         Optional<OvenRecipe> recipeMatch = level.getRecipeManager()
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
+        ItemStack result = ItemStack.EMPTY;
         if (shapedMatch.isPresent()) {
-            for(int i = 0; i < 9; ++i) {
-                ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
-                if (slotStack.hasCraftingRemainingItem()) {
-                    Direction direction = ((Direction)entity.getBlockState().getValue(OvenBlock.FACING)).getCounterClockWise();
-                    double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
-                    double y = (double)entity.worldPosition.getY() + 0.7;
-                    double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-                    spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
-                }
-            }
-
-            for (int i = 0; i < 9; ++i) {
-                entity.itemHandler.extractItem(i, 1, false);
-            }
-            inventory.getItem(9).is(shapedMatch.get().getResultItem().getItem());
-
-            entity.itemHandler.setStackInSlot(9, new ItemStack(shapedMatch.get().getResultItem().getItem(),
-                    entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(shapedMatch.get().getResultItem())));
-
-            entity.resetProgress();
-
+            result = shapedMatch.get().getResultItem(level.registryAccess());
         } else if (recipeMatch.isPresent()) {
-            for(int i = 0; i < 9; ++i) {
+            result = recipeMatch.get().getResultItem(level.registryAccess());
+        }
+
+        if (!result.isEmpty()) {
+            // Handle crafting remainders (e.g., buckets)
+            for (int i = 0; i < 9; ++i) {
                 ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
                 if (slotStack.hasCraftingRemainingItem()) {
-                    Direction direction = ((Direction)entity.getBlockState().getValue(OvenBlock.FACING)).getCounterClockWise();
-                    double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
-                    double y = (double)entity.worldPosition.getY() + 0.7;
-                    double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-                    spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
+                    Direction direction = entity.getBlockState().getValue(OvenBlock.FACING).getCounterClockWise();
+                    double x = entity.worldPosition.getX() + 0.5 + direction.getStepX() * 0.25;
+                    double y = entity.worldPosition.getY() + 0.7;
+                    double z = entity.worldPosition.getZ() + 0.5 + direction.getStepZ() * 0.25;
+                    spawnItemEntity(entity.level, slotStack.getCraftingRemainingItem(), x, y, z,
+                            direction.getStepX() * 0.08F, 0.25, direction.getStepZ() * 0.08F);
                 }
-            }
-
-            for (int i = 0; i < 9; ++i) {
                 entity.itemHandler.extractItem(i, 1, false);
             }
-            inventory.getItem(9).is(recipeMatch.get().getResultItem().getItem());
 
-            entity.itemHandler.setStackInSlot(9, new ItemStack(recipeMatch.get().getResultItem().getItem(),
-                    entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(recipeMatch.get().getResultItem())));
+            // Update output slot (slot 9)
+            ItemStack outputSlot = entity.itemHandler.getStackInSlot(9);
+            if (outputSlot.isEmpty() || outputSlot.is(result.getItem())) {
+                int newCount = outputSlot.getCount() + result.getCount();
+                entity.itemHandler.setStackInSlot(9, new ItemStack(result.getItem(), newCount));
+            }
 
             entity.resetProgress();
         }
     }
+
     public static void spawnItemEntity(Level level, ItemStack stack, double x, double y, double z, double xMotion, double yMotion, double zMotion) {
         ItemEntity entity = new ItemEntity(level, x, y, z, stack);
         entity.setDeltaMovement(xMotion, yMotion, zMotion);
         level.addFreshEntity(entity);
     }
-    private int getTheCount (ItemStack itemIn)
-    {
+
+    private int getTheCount(ItemStack itemIn) {
         return itemIn.getCount();
     }
+
     private void resetProgress() {
         this.progress = 0;
         this.maxProgress = 72;
@@ -322,21 +300,18 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         if (!this.remove && !player.isSpectator()) {
             this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
-
     }
 
     public void stopOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
             this.openersCounter.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
-
     }
 
     public void recheckOpen() {
         if (!this.remove) {
             this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
-
     }
 
     void updateBlockState(BlockState state, boolean open) {
@@ -345,18 +320,9 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
     void playSound(BlockState state, SoundEvent sound) {
         Vec3i normal = state.getValue(OvenBlock.FACING).getNormal();
-        double x = (double)this.worldPosition.getX() + (double)0.5F + (double)normal.getX() / (double)2.0F;
-        double y = (double)this.worldPosition.getY() + (double)0.5F + (double)normal.getY() / (double)2.0F;
-        double z = (double)this.worldPosition.getZ() + (double)0.5F + (double)normal.getZ() / (double)2.0F;
+        double x = this.worldPosition.getX() + 0.5 + normal.getX() / 2.0;
+        double y = this.worldPosition.getY() + 0.5 + normal.getY() / 2.0;
+        double z = this.worldPosition.getZ() + 0.5 + normal.getZ() / 2.0;
         this.level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
     }
 }
-
-
-//entity.itemHandler.extractItem(0, 1, false);
-//        entity.itemHandler.extractItem(1, 1, false);
-//        entity.itemHandler.extractItem(2, 1, false);
-//        entity.itemHandler.extractItem(3, 1, false);
-//        entity.itemHandler.extractItem(4, 1, false);
-//        entity.itemHandler.setStackInSlot(3, new ItemStack(ModItems.AVOCADO_TOAST.get(),
-//                entity.itemHandler.getStackInSlot(5).getCount() + 1));
