@@ -42,6 +42,7 @@ public abstract class FruitingLeaves extends LeavesBlock implements Bonemealable
                 .setValue(WATERLOGGED, Boolean.FALSE));
     }
 
+    //@Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return new ItemStack(FRUIT.get());
     }
@@ -73,7 +74,7 @@ public abstract class FruitingLeaves extends LeavesBlock implements Bonemealable
         boolean flag = i == MAX_AGE;
         if (!flag && player.getItemInHand(hand).is(Items.BONE_MEAL)) {
             return InteractionResult.PASS;
-        } else if (i > 1 && flag) {
+        } else if (i == MAX_AGE) {
             int j = 1 + world.random.nextInt(2);
             popResourceFromFace(world, pos, result.getDirection(), new ItemStack(ModItems.LEMON.get(), j + 1));
             world.playSound(player, pos, ModSounds.LEAVES_PICKED.get(), SoundSource.BLOCKS, 1.0F, 0.8F + world.random.nextFloat() * 0.4F);
@@ -91,7 +92,8 @@ public abstract class FruitingLeaves extends LeavesBlock implements Bonemealable
         state.add(AGE, DISTANCE, PERSISTENT, WATERLOGGED);
     }
 
-    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+    @Override
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient) {
         return state.getValue(AGE) < MAX_AGE;
     }
 

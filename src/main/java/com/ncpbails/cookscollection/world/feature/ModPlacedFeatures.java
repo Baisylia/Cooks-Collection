@@ -1,38 +1,22 @@
 package com.ncpbails.cookscollection.world.feature;
 
 import com.ncpbails.cookscollection.CooksCollection;
-import com.ncpbails.cookscollection.block.ModBlocks;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.data.worldgen.placement.VegetationPlacements;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
-import net.minecraft.world.level.levelgen.placement.*;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-
-import java.util.List;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public class ModPlacedFeatures {
-    public static final DeferredRegister<PlacedFeature> PLACED_FEATURES =
-            DeferredRegister.create(Registries.PLACED_FEATURE, CooksCollection.MOD_ID);
+    public static final ResourceKey<PlacedFeature> LEMON_CHECKED =
+            ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(CooksCollection.MOD_ID, "lemon_checked"));
 
-    public static final RegistryObject<PlacedFeature> LEMON_CHECKED = PLACED_FEATURES.register("lemon_checked",
-            () -> new PlacedFeature(ModConfiguredFeatures.LEMON_TREE.getHolder().orElseThrow(),
-                    List.of(PlacementUtils.filteredByBlockSurvival(ModBlocks.LEMON_SAPLING.get()))));
+    public static final ResourceKey<PlacedFeature> LEMON_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(CooksCollection.MOD_ID, "lemon_placed"));
 
-    public static final RegistryObject<PlacedFeature> LEMON_PLACED = PLACED_FEATURES.register("lemon_placed",
-            () -> new PlacedFeature(ModConfiguredFeatures.LEMON_SPAWN.getHolder().orElseThrow(),
-                    VegetationPlacements.treePlacement(PlacementUtils.countExtra(0, 0.05f, 1))));
+    public static final ResourceKey<PlacedFeature> SALT_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(CooksCollection.MOD_ID, "salt_placed"));
 
-    public static final RegistryObject<PlacedFeature> SALT_PLACED = PLACED_FEATURES.register("salt_placed",
-            () -> new PlacedFeature(ModConfiguredFeatures.SALT.getHolder().orElseThrow(),
-                    List.of(CountPlacement.of(16),
-                            InSquarePlacement.spread(),
-                            HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.top()),
-                            BiomeFilter.biome())));
-
-    public static void register(IEventBus eventBus) {
-        PLACED_FEATURES.register(eventBus);
+    public static void register() {
+        // No registration needed, as features are defined in JSON
     }
 }

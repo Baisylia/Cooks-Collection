@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public class LemonTreeGrower extends AbstractTreeGrower {
     @Nullable
     @Override
-    protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource p_222910_, boolean pLargeHive) {
-        return (ResourceKey<ConfiguredFeature<?, ?>>) ModConfiguredFeatures.LEMON_TREE.getHolder().orElse(null);
+    protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource random, boolean largeHive) {
+        return ModConfiguredFeatures.LEMON_TREE;
     }
 }

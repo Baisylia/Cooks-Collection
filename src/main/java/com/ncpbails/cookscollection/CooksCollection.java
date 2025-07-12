@@ -35,8 +35,8 @@ public class CooksCollection {
         ModItems.register(eventBus);
         ModBlocks.register(eventBus);
         ModBlockEntities.register(eventBus);
-//        ModConfiguredFeatures.register(eventBus);
-//        ModPlacedFeatures.register(eventBus);
+        //ModConfiguredFeatures.register(eventBus);
+        //ModPlacedFeatures.register(eventBus);
         ModMenuTypes.register(eventBus);
         ModRecipes.register(eventBus);
         ModSounds.register(eventBus);

@@ -1,13 +1,12 @@
 package com.ncpbails.cookscollection.block;
 
 import com.ncpbails.cookscollection.CooksCollection;
-import com.ncpbails.cookscollection.block.custom.FruitingLeaves;
+import com.ncpbails.cookscollection.block.custom.LemonFruitingLeaves;
 import com.ncpbails.cookscollection.block.custom.OvenBlock;
 import com.ncpbails.cookscollection.block.custom.RusticLoafBlock;
 import com.ncpbails.cookscollection.block.custom.SaltedPointedDripstone;
 import com.ncpbails.cookscollection.item.ModItems;
 import com.ncpbails.cookscollection.world.feature.tree.LemonTreeGrower;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.AxeItem;
@@ -17,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,7 +28,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
-
 import vectorwing.farmersdelight.common.registry.ModCreativeTabs;
 
 import java.util.function.Supplier;
@@ -84,17 +81,12 @@ public class ModBlocks {
             }, false, 0);
 
     public static final RegistryObject<Block> FRUITING_LEMON_LEAVES = registerBlock("fruiting_lemon_leaves",
-            () -> new FruitingLeaves(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES), ModItems.LEMON) {
-                @Override
-                public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean b) {
-                    return false;
-                }
-            },
+            () -> new LemonFruitingLeaves(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES)),
             false, 0);
 
     public static final RegistryObject<Block> RUSTIC_LOAF = registerBlock("rustic_loaf",
             () -> new RusticLoafBlock(BlockBehaviour.Properties.copy(vectorwing.farmersdelight.common.registry.ModBlocks.APPLE_PIE.get()).noOcclusion(),
-                    ModItems.RUSTIC_LOAF_SLICE), false, 0);
+                    () -> ModItems.RUSTIC_LOAF_SLICE.get()), false, 0);
 
     public static final RegistryObject<Block> SALTED_POINTED_DRIPSTONE = registerBlockWithoutBlockItem("salted_pointed_dripstone",
             () -> new SaltedPointedDripstone(BlockBehaviour.Properties.copy(Blocks.POINTED_DRIPSTONE).noOcclusion()
@@ -132,12 +124,12 @@ public class ModBlocks {
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
-        eventBus.register(ModBlocks.class); // Register the class for event handling
+        eventBus.register(ModBlocks.class);
     }
 
     @SubscribeEvent
     public static void buildCreativeModeTabContents(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTab() == ModCreativeTabs.TAB_FARMERS_DELIGHT.get()) { // Use correct Farmer’s Delight tab
+        if (event.getTab() == ModCreativeTabs.TAB_FARMERS_DELIGHT.get()) {
             event.accept(LEMON_CRATE);
             event.accept(LEMON_SAPLING);
             event.accept(LEMON_LOG);
