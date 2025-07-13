@@ -1,0 +1,43 @@
+package com.ncpbails.cookscollection.client.recipebook;
+
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
+import com.ncpbails.cookscollection.recipe.ModRecipeBookTypes;
+import com.ncpbails.cookscollection.recipe.OvenRecipe;
+import net.minecraft.client.RecipeBookCategories;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
+
+import java.util.function.Supplier;
+
+public class RecipeCategories {
+    public static final Supplier<RecipeBookCategories> BAKING_SEARCH = Suppliers.memoize(() ->
+            RecipeBookCategories.create("BAKING_SEARCH", new ItemStack(Items.COMPASS)));
+    public static final Supplier<RecipeBookCategories> BAKING_PASTRIES = Suppliers.memoize(() ->
+            RecipeBookCategories.create("BAKING_PASTRIES", new ItemStack(Items.BREAD)));
+    public static final Supplier<RecipeBookCategories> BAKING_DESSERTS = Suppliers.memoize(() ->
+            RecipeBookCategories.create("BAKING_DESSERTS", new ItemStack(Items.CAKE)));
+    public static final Supplier<RecipeBookCategories> BAKING_MISC = Suppliers.memoize(() ->
+            RecipeBookCategories.create("BAKING_MISC", new ItemStack(Items.COOKIE)));
+
+    public static void init(RegisterRecipeBookCategoriesEvent event) {
+        event.registerBookCategories(ModRecipeBookTypes.OVEN,
+                ImmutableList.of(BAKING_SEARCH.get(), BAKING_PASTRIES.get(), BAKING_DESSERTS.get(), BAKING_MISC.get()));
+        event.registerAggregateCategory(BAKING_SEARCH.get(),
+                ImmutableList.of(BAKING_PASTRIES.get(), BAKING_DESSERTS.get(), BAKING_MISC.get()));
+        event.registerRecipeCategoryFinder(OvenRecipe.Type.INSTANCE, recipe -> {
+            if (recipe instanceof OvenRecipe ovenRecipe) {
+                OvenRecipeBookTab tab = ovenRecipe.getRecipeBookTab();
+                if (tab != null) {
+                    return switch (tab) {
+                        case PASTRIES -> BAKING_PASTRIES.get();
+                        case DESSERTS -> BAKING_DESSERTS.get();
+                        case MISC -> BAKING_MISC.get();
+                    };
+                }
+            }
+            return BAKING_MISC.get();
+        });
+    }
+}

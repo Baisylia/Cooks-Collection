@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.ncpbails.cookscollection.CooksCollection;
+import com.ncpbails.cookscollection.client.recipebook.OvenRecipeBookTab;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.RecipeMatcher;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +29,15 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     private final NonNullList<Ingredient> recipeItems;
     private final int cookTime;
     private final boolean isSimple;
+    private final OvenRecipeBookTab recipeBookTab;
 
-    public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime) {
+    public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime, @Nullable OvenRecipeBookTab recipeBookTab) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.cookTime = cookTime;
         this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
+        this.recipeBookTab = recipeBookTab;
     }
 
     @Override
@@ -60,15 +64,17 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
         return this.cookTime;
     }
 
+    @Nullable
+    public OvenRecipeBookTab getRecipeBookTab() {
+        return this.recipeBookTab;
+    }
+
     @Override
     public boolean matches(SimpleContainer container, Level level) {
-        // Check if output slot is already occupied with a different item
         ItemStack outputSlot = container.getItem(9);
         if (!outputSlot.isEmpty() && !ItemStack.isSameItemSameTags(this.getResultItem(level.registryAccess()), outputSlot)) {
             return false;
         }
-
-        // Check if output slot is full
         if (!outputSlot.isEmpty() && outputSlot.getCount() >= outputSlot.getMaxStackSize()) {
             return false;
         }
@@ -127,7 +133,9 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
             } else {
                 ItemStack itemStack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
                 int cookTimeIn = GsonHelper.getAsInt(json, "cooktime", 200);
-                return new OvenRecipe(resourceLocation, itemStack, inputs, cookTimeIn);
+                String tabName = GsonHelper.getAsString(json, "recipe_book_tab", null);
+                OvenRecipeBookTab tab = tabName != null ? OvenRecipeBookTab.findByName(tabName) : null;
+                return new OvenRecipe(resourceLocation, itemStack, inputs, cookTimeIn, tab);
             }
         }
 
@@ -154,7 +162,9 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
             ItemStack itemStack = buf.readItem();
             int cookTimeIn = buf.readVarInt();
-            return new OvenRecipe(id, itemStack, inputs, cookTimeIn);
+            String tabName = buf.readUtf(32767);
+            OvenRecipeBookTab tab = tabName.isEmpty() ? null : OvenRecipeBookTab.findByName(tabName);
+            return new OvenRecipe(id, itemStack, inputs, cookTimeIn, tab);
         }
 
         @Override
@@ -167,6 +177,7 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
             buf.writeItem(recipe.getResultItem(RegistryAccess.EMPTY));
             buf.writeVarInt(recipe.cookTime);
+            buf.writeUtf(recipe.recipeBookTab != null ? recipe.recipeBookTab.name : "");
         }
     }
 }

@@ -325,4 +325,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         double z = this.worldPosition.getZ() + 0.5 + normal.getZ() / 2.0;
         this.level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
     }
+
+    public void setRecipeUsed(OvenRecipe ovenRecipe) {
+    }
 }
