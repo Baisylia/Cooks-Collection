@@ -1,0 +1,8 @@
+{
+	"parent": "minecraft:block/orientable",
+	"textures": {
+		"top": "cookscollection:block/fueled_stove_top_on",
+		"front": "cookscollection:block/fueled_stove_front_on",
+		"side": "cookscollection:block/fueled_stove_side"
+	}
+}
