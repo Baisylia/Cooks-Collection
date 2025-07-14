@@ -1,0 +1,3 @@
+About fueled_stove_gui:
+The temporary texture for the fueled_stove_gui is from the mod 'Thermopolium' (https://www.curseforge.com/minecraft/mc-mods/thermopolium / https://github.com/TeamMoegMC/Thermopolium)
+The mod is by TeamMoegMC and by khjxiaogu,  yuesha-yc, and  Lyuuke
