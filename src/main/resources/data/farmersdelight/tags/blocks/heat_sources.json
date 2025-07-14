@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "cookscollection:fueled_stove",
+      "required": false,
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "cookscollection"
+        },
+        {
+          "type": "minecraft:block_state_property",
+          "block": "cookscollection:fueled_stove",
+          "properties": {
+            "lit": "true"
+          }
+        }
+      ]
+    }
+  ]
+}
