@@ -107,7 +107,7 @@ public class OvenMenu extends RecipeBookMenu<SimpleContainer> {
                 return ItemStack.EMPTY;
             }
         } else {
-            System.out.println("Invalid slotIndex: " + index);
+            //System.out.println("Invalid slotIndex: " + index);
             return ItemStack.EMPTY;
         }
 
@@ -151,7 +151,7 @@ public class OvenMenu extends RecipeBookMenu<SimpleContainer> {
             ItemStack stack = this.slots.get(i).getItem();
             if (!stack.isEmpty()) {
                 itemHelper.accountStack(stack, 1);
-                System.out.println("Filling slot " + i + " with " + stack.getItem());
+                //System.out.println("Filling slot " + i + " with " + stack.getItem());
             }
         }
     }
@@ -161,7 +161,7 @@ public class OvenMenu extends RecipeBookMenu<SimpleContainer> {
         // Clear only oven input slots (0-8)
         for (int i = 0; i < 9; ++i) {
             this.slots.get(i).set(ItemStack.EMPTY);
-            System.out.println("Server: Clearing slot " + i);
+            //System.out.println("Server: Clearing slot " + i);
         }
     }
 
@@ -172,7 +172,7 @@ public class OvenMenu extends RecipeBookMenu<SimpleContainer> {
             tempContainer.setItem(i, this.slots.get(i).getItem());
         }
         boolean matches = recipe.matches(tempContainer, this.level);
-        System.out.println("Server: Recipe " + recipe.getId() + " matches: " + matches);
+        //System.out.println("Server: Recipe " + recipe.getId() + " matches: " + matches);
         return matches;
     }
 
@@ -182,22 +182,22 @@ public class OvenMenu extends RecipeBookMenu<SimpleContainer> {
             SimpleContainer tempContainer = new SimpleContainer(9);
             for (int i = 0; i < 9; ++i) {
                 tempContainer.setItem(i, this.slots.get(i).getItem());
-                System.out.println("Server: Slot " + i + " contains " + this.slots.get(i).getItem());
+                //System.out.println("Server: Slot " + i + " contains " + this.slots.get(i).getItem());
             }
             // Reset cooking progress if recipe changes
             Recipe<? super SimpleContainer> newRecipe = this.level.getRecipeManager().getRecipeFor(OvenRecipe.Type.INSTANCE, tempContainer, this.level).orElse(null);
-            System.out.println("Server: Slots changed, new recipe: " + (newRecipe != null ? newRecipe.getId() : "none"));
+            //System.out.println("Server: Slots changed, new recipe: " + (newRecipe != null ? newRecipe.getId() : "none"));
             if (newRecipe != null) {
                 // Assuming ContainerData index 0 is cooking progress, reset it
                 this.data.set(0, 0);
-                System.out.println("Server: Reset cooking progress to 0");
+                //System.out.println("Server: Reset cooking progress to 0");
             }
         }
     }
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        System.out.println("Server: Clicked slot " + slotId + ", button " + button + ", clickType " + clickType);
+        //System.out.println("Server: Clicked slot " + slotId + ", button " + button + ", clickType " + clickType);
         super.clicked(slotId, button, clickType, player);
     }
 

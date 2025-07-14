@@ -96,7 +96,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 		this.burnTime = 0;
 		this.burnTimeTotal = 0;
 		this.lastRecipeID = null;
-		LOGGER.info("Initialized FueledStoveBlockEntity at {} with MenuProvider from net.minecraft.world", pos);
+		//LOGGER.info("Initialized FueledStoveBlockEntity at {} with MenuProvider from net.minecraft.world", pos);
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 		if (compound.contains("LastRecipe")) {
 			lastRecipeID = new ResourceLocation(compound.getString("LastRecipe"));
 		}
-		LOGGER.debug("Loaded NBT at {}: burnTime={}, burnTimeTotal={}", worldPosition, burnTime, burnTimeTotal);
+		//LOGGER.debug("Loaded NBT at {}: burnTime={}, burnTimeTotal={}", worldPosition, burnTime, burnTimeTotal);
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 	public void onLoad() {
 		super.onLoad();
 		lazyItemHandler = LazyOptional.of(() -> inventory);
-		LOGGER.info("Loaded FueledStoveBlockEntity capabilities at {}", worldPosition);
+		//LOGGER.info("Loaded FueledStoveBlockEntity capabilities at {}", worldPosition);
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 
 		boolean isLit = state.getValue(BlockStateProperties.LIT);
 		ItemStack inputStack = stove.inventory.getStackInSlot(INPUT_SLOT);
-		LOGGER.debug("Cooking tick at {}: isLit={}, burnTime={}, inputStack={}", pos, isLit, stove.burnTime, inputStack);
+		//LOGGER.debug("Cooking tick at {}: isLit={}, burnTime={}, inputStack={}", pos, isLit, stove.burnTime, inputStack);
 
 		if (isLit && stove.burnTime <= 0 && !inputStack.isEmpty()) {
 			int fuelBurnTime = ForgeHooks.getBurnTime(inputStack, RecipeType.SMELTING);
@@ -172,17 +172,17 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 					stove.inventory.setStackInSlot(INPUT_SLOT, remainder);
 				}
 				stove.inventoryChanged();
-				LOGGER.debug("Consumed fuel {} at {}, set burnTime={}", inputStack, pos, stove.burnTime);
+				//LOGGER.debug("Consumed fuel {} at {}, set burnTime={}", inputStack, pos, stove.burnTime);
 			} else {
 				level.setBlock(pos, state.setValue(BlockStateProperties.LIT, false), 3);
 				isLit = false;
-				LOGGER.debug("No valid fuel at {}, extinguished stove", pos);
+				//LOGGER.debug("No valid fuel at {}, extinguished stove", pos);
 			}
 		}
 
 		if (isLit && stove.burnTime > 0) {
 			stove.burnTime--;
-			LOGGER.debug("Decremented burnTime to {} at {}", stove.burnTime, pos);
+			//LOGGER.debug("Decremented burnTime to {} at {}", stove.burnTime, pos);
 			if (!inputStack.isEmpty()) {
 				Optional<CampfireCookingRecipe> recipe = stove.getMatchingRecipe(inputStack);
 				if (recipe.isPresent()) {
@@ -196,7 +196,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 						stove.cookingTime = 0;
 						stove.lastRecipeID = recipe.get().getId();
 						stove.inventoryChanged();
-						LOGGER.debug("Cooked item at {}, output={}", pos, result);
+						//LOGGER.debug("Cooked item at {}, output={}", pos, result);
 					}
 				} else {
 					stove.cookingTime = 0;
@@ -207,7 +207,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 		} else if (stove.burnTime <= 0 && isLit) {
 			level.setBlock(pos, state.setValue(BlockStateProperties.LIT, false), 3);
 			stove.cookingTime = 0;
-			LOGGER.debug("Extinguished stove at {}: burnTime={}", pos, stove.burnTime);
+			//LOGGER.debug("Extinguished stove at {}: burnTime={}", pos, stove.burnTime);
 		}
 	}
 
@@ -221,7 +221,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 				level.addParticle(ParticleTypes.SMOKE, x, y, z, 0.0, 5.0E-4, 0.0);
 				level.addParticle(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
 			}
-			LOGGER.debug("Added animation particles at {}", pos);
+			//LOGGER.debug("Added animation particles at {}", pos);
 		}
 	}
 
@@ -232,7 +232,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 			inventory.setStackInSlot(INPUT_SLOT, itemStackIn.split(1));
 			lastRecipeID = recipe.getId();
 			inventoryChanged();
-			LOGGER.debug("Added item {} to input slot at {}", itemStackIn, worldPosition);
+			//LOGGER.debug("Added item {} to input slot at {}", itemStackIn, worldPosition);
 			return true;
 		}
 		return false;
@@ -249,10 +249,10 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 				inventory.setStackInSlot(INPUT_SLOT, remainder);
 			}
 			inventoryChanged();
-			LOGGER.debug("Ignited stove with fuel {} at {}, set burnTime={}", inputStack, worldPosition, fuelBurnTime);
+			//LOGGER.debug("Ignited stove with fuel {} at {}, set burnTime={}", inputStack, worldPosition, fuelBurnTime);
 			return true;
 		}
-		LOGGER.debug("Failed to ignite stove at {}: no valid fuel in input slot", worldPosition);
+		//LOGGER.debug("Failed to ignite stove at {}: no valid fuel in input slot", worldPosition);
 		return false;
 	}
 
@@ -274,7 +274,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 		if (level != null) {
 			BlockState above = level.getBlockState(worldPosition.above());
 			boolean blocked = Shapes.joinIsNotEmpty(GRILLING_AREA, above.getShape(level, worldPosition.above()), BooleanOp.AND);
-			LOGGER.debug("Stove at {} blocked above: {}", worldPosition, blocked);
+			//LOGGER.debug("Stove at {} blocked above: {}", worldPosition, blocked);
 			return blocked;
 		}
 		return false;
@@ -292,20 +292,20 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 		setChanged();
 		if (level != null) {
 			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-			LOGGER.debug("Inventory changed, block updated at {}", worldPosition);
+			//LOGGER.debug("Inventory changed, block updated at {}", worldPosition);
 		}
 	}
 
 	@Override
 	public net.minecraft.network.chat.Component getDisplayName() {
-		LOGGER.info("FueledStoveBlockEntity getDisplayName called");
+		//LOGGER.info("FueledStoveBlockEntity getDisplayName called");
 		return net.minecraft.network.chat.Component.translatable("block.cookscollection.fueled_stove");
 	}
 
 	@Nullable
 	@Override
 	public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-		LOGGER.info("Creating FueledStoveMenu for containerId: {}", containerId);
+		//LOGGER.info("Creating FueledStoveMenu for containerId: {}", containerId);
 		return new FueledStoveMenu(containerId, inventory, this, this.data);
 	}
 }

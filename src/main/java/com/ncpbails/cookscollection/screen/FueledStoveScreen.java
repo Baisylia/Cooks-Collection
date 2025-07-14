@@ -24,7 +24,7 @@ public class FueledStoveScreen extends AbstractContainerScreen<FueledStoveMenu> 
     @Override
     public void init() {
         super.init();
-        this.titleLabelX = 56; // Title at (56, 34)
+        this.titleLabelX = 56;
         this.titleLabelY = 34;
         this.inventoryLabelX = 8;
         this.inventoryLabelY = this.imageHeight - 94;
@@ -42,10 +42,11 @@ public class FueledStoveScreen extends AbstractContainerScreen<FueledStoveMenu> 
 
         if (menu.isFueled()) {
             int burnProgress = menu.getBurnProgressionScaled();
-            // Render vertically, from top to bottom, shrinking from top as burnTime decreases
-            int height = (burnProgress * HEAT_ICON.height) / 31; // Scale height based on burnProgress
-            int yOffset = HEAT_ICON.y; // Anchor at top of HEAT_ICON
-            guiGraphics.blit(TEXTURE, x + HEAT_ICON.x, y + yOffset, 176, 0, HEAT_ICON.width, height);
+
+            int height = (burnProgress * HEAT_ICON.height) / 31;
+            int yOffset = HEAT_ICON.y + (HEAT_ICON.height - height);
+            int vOffset = HEAT_ICON.height - height;
+            guiGraphics.blit(TEXTURE, x + HEAT_ICON.x, y + yOffset, 176, vOffset, HEAT_ICON.width, height);
         }
     }
 

@@ -66,9 +66,9 @@ public class FueledStoveBlock extends BaseEntityBlock {
 						if (!player.isCreative()) {
 							heldStack.hurtAndBreak(1, player, action -> action.broadcastBreakEvent(hand));
 						}
-						LOGGER.debug("Ignited stove at {} with fuel from input slot", pos);
+						//LOGGER.debug("Ignited stove at {} with fuel from input slot", pos);
 					} else {
-						LOGGER.debug("Failed to ignite stove at {}: no valid fuel", pos);
+						//LOGGER.debug("Failed to ignite stove at {}: no valid fuel", pos);
 					}
 				}
 				return InteractionResult.sidedSuccess(level.isClientSide);
@@ -82,7 +82,7 @@ public class FueledStoveBlock extends BaseEntityBlock {
 					if (!player.isCreative()) {
 						player.setItemInHand(hand, new ItemStack(Items.BUCKET));
 					}
-					LOGGER.debug("Extinguished stove at {} with water bucket", pos);
+					//LOGGER.debug("Extinguished stove at {} with water bucket", pos);
 				}
 				return InteractionResult.sidedSuccess(level.isClientSide);
 			}
@@ -105,11 +105,11 @@ public class FueledStoveBlock extends BaseEntityBlock {
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			BlockEntity entity = level.getBlockEntity(pos);
 			if (entity instanceof FueledStoveBlockEntity stoveEntity) {
-				LOGGER.info("Attempting to open FueledStoveMenu for block at {}", pos);
+				//LOGGER.info("Attempting to open FueledStoveMenu for block at {}", pos);
 				NetworkHooks.openScreen(serverPlayer, stoveEntity, buf -> buf.writeBlockPos(pos));
 				return InteractionResult.SUCCESS;
 			} else {
-				LOGGER.error("Failed to open FueledStoveMenu: BlockEntity at {} is not FueledStoveBlockEntity", pos);
+				//LOGGER.error("Failed to open FueledStoveMenu: BlockEntity at {} is not FueledStoveBlockEntity", pos);
 			}
 		}
 		return InteractionResult.sidedSuccess(level.isClientSide);
@@ -170,7 +170,7 @@ public class FueledStoveBlock extends BaseEntityBlock {
 			double zOffset = axis == Direction.Axis.Z ? direction.getStepZ() * 0.52 : offset;
 			level.addParticle(ParticleTypes.SMOKE, x + xOffset, y + yOffset, z + zOffset, 0.0, 0.0, 0.0);
 			level.addParticle(ParticleTypes.FLAME, x + xOffset, y + yOffset, z + zOffset, 0.0, 0.0, 0.0);
-			LOGGER.debug("Added block animation particles at {}", pos);
+			//LOGGER.debug("Added block animation particles at {}", pos);
 		}
 	}
 
