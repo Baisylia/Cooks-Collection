@@ -2,6 +2,7 @@ package com.ncpbails.cookscollection.block.entity;
 
 import com.ncpbails.cookscollection.CooksCollection;
 import com.ncpbails.cookscollection.block.ModBlocks;
+import com.ncpbails.cookscollection.block.entity.custom.FueledStoveBlockEntity;
 import com.ncpbails.cookscollection.block.entity.custom.OvenBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -10,15 +11,16 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModBlockEntities {
-
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, CooksCollection.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<OvenBlockEntity>> OVEN_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("oven_block_entity", () ->
-                    BlockEntityType.Builder.of(OvenBlockEntity::new,
-                            ModBlocks.OVEN.get()).build(null));
+                    BlockEntityType.Builder.of(OvenBlockEntity::new, ModBlocks.OVEN.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<FueledStoveBlockEntity>> FUELED_STOVE =
+            BLOCK_ENTITIES.register("fueled_stove_block_entity", () ->
+                    BlockEntityType.Builder.of(FueledStoveBlockEntity::new, ModBlocks.FUELED_STOVE.get()).build(null));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);

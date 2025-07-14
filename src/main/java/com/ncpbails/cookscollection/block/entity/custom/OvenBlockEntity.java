@@ -178,7 +178,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         if (hasRecipe(pBlockEntity)) {
             pBlockEntity.progress++;
             setChanged(pLevel, pPos, pState);
-            if (pBlockEntity.progress > pBlockEntity.maxProgress) {
+            if (pBlockEntity.progress >= pBlockEntity.maxProgress) {
                 craftItem(pBlockEntity);
             }
         } else {
@@ -251,8 +251,10 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         ItemStack result = ItemStack.EMPTY;
         if (shapedMatch.isPresent()) {
             result = shapedMatch.get().getResultItem(level.registryAccess());
+            entity.maxProgress = shapedMatch.get().getCookTime(); // Preserve cook time
         } else if (recipeMatch.isPresent()) {
             result = recipeMatch.get().getResultItem(level.registryAccess());
+            entity.maxProgress = recipeMatch.get().getCookTime(); // Preserve cook time
         }
 
         if (!result.isEmpty()) {
@@ -293,7 +295,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
     private void resetProgress() {
         this.progress = 0;
-        this.maxProgress = 72;
+        // Do not reset maxProgress to preserve recipe cook time
     }
 
     public void startOpen(Player player) {
@@ -327,5 +329,6 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public void setRecipeUsed(OvenRecipe ovenRecipe) {
+        this.maxProgress = ovenRecipe.getCookTime();
     }
 }

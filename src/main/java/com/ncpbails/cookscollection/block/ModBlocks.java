@@ -1,10 +1,7 @@
 package com.ncpbails.cookscollection.block;
 
 import com.ncpbails.cookscollection.CooksCollection;
-import com.ncpbails.cookscollection.block.custom.LemonFruitingLeaves;
-import com.ncpbails.cookscollection.block.custom.OvenBlock;
-import com.ncpbails.cookscollection.block.custom.RusticLoafBlock;
-import com.ncpbails.cookscollection.block.custom.SaltedPointedDripstone;
+import com.ncpbails.cookscollection.block.custom.*;
 import com.ncpbails.cookscollection.item.ModItems;
 import com.ncpbails.cookscollection.world.feature.tree.LemonTreeGrower;
 import net.minecraft.core.BlockPos;
@@ -19,6 +16,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -31,9 +29,14 @@ import org.jetbrains.annotations.Nullable;
 import vectorwing.farmersdelight.common.registry.ModCreativeTabs;
 
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CooksCollection.MOD_ID);
+
+    private static ToIntFunction<BlockState> litBlockEmission(int lightValue) {
+        return (state) -> state.getValue(BlockStateProperties.LIT) ? lightValue : 0;
+    }
 
     public static final RegistryObject<Block> LEMON_CRATE = registerBlock("lemon_crate",
             () -> new Block(BlockBehaviour.Properties.copy(vectorwing.farmersdelight.common.registry.ModBlocks.CARROT_CRATE.get())),
@@ -96,8 +99,15 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK).noOcclusion()), false, 0);
 
     public static final RegistryObject<Block> OVEN = registerBlock("oven",
-            () -> new OvenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0F, 6.0F).requiresCorrectToolForDrops()),
+            () -> new OvenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0F, 6.0F)
+                    .requiresCorrectToolForDrops().lightLevel(litBlockEmission(13))),
             false, 0);
+
+    public static final RegistryObject<Block> FUELED_STOVE = registerBlock("fueled_stove",
+            () -> new FueledStoveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0F, 6.0F)
+                    .requiresCorrectToolForDrops().lightLevel(litBlockEmission(13))),
+            false, 0);
+
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, boolean isFuel, Integer fuelAmount) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
@@ -139,6 +149,7 @@ public class ModBlocks {
             event.accept(RUSTIC_LOAF);
             event.accept(SALTED_DRIPSTONE_BLOCK);
             event.accept(OVEN);
+            event.accept(FUELED_STOVE);
         }
     }
 }
