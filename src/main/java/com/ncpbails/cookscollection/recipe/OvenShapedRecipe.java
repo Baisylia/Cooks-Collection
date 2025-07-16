@@ -4,10 +4,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.*;
-import it.unimi.dsi.fastutil.ints.IntList;
+import com.ncpbails.cookscollection.CooksCollection;
+import com.ncpbails.cookscollection.client.recipebook.OvenRecipeBookTab;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.RecipeMatcher;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,8 +41,9 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
     private final NonNullList<Ingredient> recipeItems;
     private final int cookTime;
     private final boolean isSimple;
+    private final OvenRecipeBookTab recipeBookTab;
 
-    public OvenShapedRecipe(int width, int height, ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime) {
+    public OvenShapedRecipe(int width, int height, ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime, @Nullable OvenRecipeBookTab recipeBookTab) {
         this.width = width;
         this.height = height;
         this.id = id;
@@ -49,6 +51,7 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
         this.recipeItems = recipeItems;
         this.cookTime = cookTime;
         this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
+        this.recipeBookTab = recipeBookTab;
     }
 
     @Override
@@ -73,6 +76,11 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
 
     public int getCookTime() {
         return this.cookTime;
+    }
+
+    @Nullable
+    public OvenRecipeBookTab getRecipeBookTab() {
+        return this.recipeBookTab;
     }
 
     @Override
@@ -317,18 +325,20 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
 
     public static class Serializer implements RecipeSerializer<OvenShapedRecipe> {
         public static final Serializer INSTANCE = new Serializer();
-        private static final ResourceLocation NAME = new ResourceLocation("cookscollection", "baking_shaped");
+        private static final ResourceLocation NAME = new ResourceLocation(CooksCollection.MOD_ID, "baking_shaped");
 
         @Override
         public OvenShapedRecipe fromJson(ResourceLocation id, JsonObject json) {
-            Map<String, Ingredient> map = OvenShapedRecipe.keyFromJson(GsonHelper.getAsJsonObject(json, "key"));
-            String[] astring = OvenShapedRecipe.shrink(OvenShapedRecipe.patternFromJson(GsonHelper.getAsJsonArray(json, "pattern")));
+            Map<String, Ingredient> map = keyFromJson(GsonHelper.getAsJsonObject(json, "key"));
+            String[] astring = shrink(patternFromJson(GsonHelper.getAsJsonArray(json, "pattern")));
             int width = astring[0].length();
             int height = astring.length;
-            NonNullList<Ingredient> nonNullList = OvenShapedRecipe.dissolvePattern(astring, map, width, height);
-            ItemStack itemStack = OvenShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
+            NonNullList<Ingredient> nonNullList = dissolvePattern(astring, map, width, height);
+            ItemStack itemStack = itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
             int cookTimeIn = GsonHelper.getAsInt(json, "cooktime", 200);
-            return new OvenShapedRecipe(width, height, id, itemStack, nonNullList, cookTimeIn);
+            String tabName = GsonHelper.getAsString(json, "recipe_book_tab", null);
+            OvenRecipeBookTab tab = tabName != null ? OvenRecipeBookTab.findByName(tabName) : null;
+            return new OvenShapedRecipe(width, height, id, itemStack, nonNullList, cookTimeIn, tab);
         }
 
         @Override
@@ -341,7 +351,9 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
             }
             ItemStack itemStack = buf.readItem();
             int cookTimeIn = buf.readVarInt();
-            return new OvenShapedRecipe(width, height, id, itemStack, nonNullList, cookTimeIn);
+            String tabName = buf.readUtf();
+            OvenRecipeBookTab tab = tabName.isEmpty() ? null : OvenRecipeBookTab.findByName(tabName);
+            return new OvenShapedRecipe(width, height, id, itemStack, nonNullList, cookTimeIn, tab);
         }
 
         @Override
@@ -353,6 +365,7 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
             }
             buf.writeItem(recipe.getResultItem(RegistryAccess.EMPTY));
             buf.writeVarInt(recipe.cookTime);
+            buf.writeUtf(recipe.recipeBookTab != null ? recipe.recipeBookTab.name : "");
         }
     }
 }

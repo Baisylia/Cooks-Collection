@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
@@ -38,14 +39,13 @@ import vectorwing.farmersdelight.common.tag.ModTags;
 
 import java.util.Optional;
 
-import static com.ncpbails.cookscollection.block.custom.OvenBlock.LIT;
-
 public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
     protected final ContainerData data;
     private int progress = 0;
     private int maxProgress = 72;
     private int litTime = 0;
+    private ResourceLocation lastRecipeID; // Track the last recipe used
     static int countOutput = 1;
     private ContainerOpenersCounter openersCounter;
 
@@ -53,6 +53,9 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            if (slot < 9) { // Input slots changed, check for new recipe
+                lastRecipeID = null; // Force recipe recheck
+            }
         }
     };
 
@@ -144,6 +147,9 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         tag.putInt("oven.progress", progress);
         tag.putInt("oven.lit_time", litTime);
         tag.putInt("oven.max_progress", maxProgress);
+        if (lastRecipeID != null) {
+            tag.putString("LastRecipe", lastRecipeID.toString());
+        }
         super.saveAdditional(tag);
     }
 
@@ -154,6 +160,9 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         progress = nbt.getInt("oven.progress");
         litTime = nbt.getInt("oven.lit_time");
         maxProgress = nbt.getInt("oven.max_progress");
+        if (nbt.contains("LastRecipe")) {
+            lastRecipeID = new ResourceLocation(nbt.getString("LastRecipe"));
+        }
     }
 
     public void drops() {
@@ -210,10 +219,22 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
         if (shapedMatch.isPresent()) {
-            entity.maxProgress = shapedMatch.get().getCookTime();
+            // Check if recipe has changed
+            ResourceLocation newRecipeID = shapedMatch.get().getId();
+            if (entity.lastRecipeID == null || !entity.lastRecipeID.equals(newRecipeID)) {
+                entity.progress = 0; // Reset progress for new recipe
+                entity.maxProgress = shapedMatch.get().getCookTime();
+                entity.lastRecipeID = newRecipeID;
+            }
             return true;
         } else if (recipeMatch.isPresent()) {
-            entity.maxProgress = recipeMatch.get().getCookTime();
+            // Check if recipe has changed
+            ResourceLocation newRecipeID = recipeMatch.get().getId();
+            if (entity.lastRecipeID == null || !entity.lastRecipeID.equals(newRecipeID)) {
+                entity.progress = 0; // Reset progress for new recipe
+                entity.maxProgress = recipeMatch.get().getCookTime();
+                entity.lastRecipeID = newRecipeID;
+            }
             return true;
         }
         return false;
@@ -223,14 +244,14 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         BlockState stateBelow = level.getBlockState(pos.below());
         if (stateBelow.hasProperty(BlockStateProperties.LIT) ? stateBelow.getValue(BlockStateProperties.LIT) : true) {
             if (stateBelow.is(ModTags.HEAT_SOURCES) || stateBelow.is(ModTags.HEAT_CONDUCTORS)) {
-                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.TRUE), 3);
+                level.setBlock(pos, entity.getBlockState().setValue(OvenBlock.LIT, Boolean.TRUE), 3);
                 return true;
             } else {
-                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.FALSE), 3);
+                level.setBlock(pos, entity.getBlockState().setValue(OvenBlock.LIT, Boolean.FALSE), 3);
                 return false;
             }
         } else {
-            level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.FALSE), 3);
+            level.setBlock(pos, entity.getBlockState().setValue(OvenBlock.LIT, Boolean.FALSE), 3);
             return false;
         }
     }
@@ -243,6 +264,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         }
 
         // Check for OvenShapedRecipe or OvenRecipe
+        assert level != null;
         Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
                 .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
         Optional<OvenRecipe> recipeMatch = level.getRecipeManager()
@@ -252,9 +274,11 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         if (shapedMatch.isPresent()) {
             result = shapedMatch.get().getResultItem(level.registryAccess());
             entity.maxProgress = shapedMatch.get().getCookTime(); // Preserve cook time
+            entity.lastRecipeID = shapedMatch.get().getId();
         } else if (recipeMatch.isPresent()) {
             result = recipeMatch.get().getResultItem(level.registryAccess());
             entity.maxProgress = recipeMatch.get().getCookTime(); // Preserve cook time
+            entity.lastRecipeID = recipeMatch.get().getId();
         }
 
         if (!result.isEmpty()) {
@@ -330,5 +354,15 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
     public void setRecipeUsed(OvenRecipe ovenRecipe) {
         this.maxProgress = ovenRecipe.getCookTime();
+        this.progress = 0; // Reset progress when setting a new recipe
+        this.lastRecipeID = ovenRecipe.getId();
+        setChanged();
+    }
+
+    public void setRecipeUsed(OvenShapedRecipe ovenShapedRecipe) {
+        this.maxProgress = ovenShapedRecipe.getCookTime();
+        this.progress = 0; // Reset progress when setting a new recipe
+        this.lastRecipeID = ovenShapedRecipe.getId();
+        setChanged();
     }
 }

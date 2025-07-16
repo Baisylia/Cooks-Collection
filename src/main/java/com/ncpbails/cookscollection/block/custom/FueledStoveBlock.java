@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
@@ -55,6 +56,11 @@ public class FueledStoveBlock extends BaseEntityBlock {
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		ItemStack heldStack = player.getItemInHand(hand);
 
+		// Allow block placement if holding a block item
+		if (heldStack.getItem() instanceof BlockItem) {
+			return InteractionResult.PASS; // Let vanilla handle block placement
+		}
+
 		if (!state.getValue(LIT)) {
 			// Ignite with flint and steel
 			if (heldStack.is(Items.FLINT_AND_STEEL)) {
@@ -77,6 +83,15 @@ public class FueledStoveBlock extends BaseEntityBlock {
 			// Extinguish with water bucket
 			if (heldStack.is(Items.WATER_BUCKET)) {
 				if (!level.isClientSide) {
+
+					BlockEntity tileEntity = level.getBlockEntity(pos);
+					if (tileEntity instanceof FueledStoveBlockEntity stoveEntity) {
+						stoveEntity.data.set(2, 0); // Reset burnTime
+						stoveEntity.data.set(3, 0); // Reset burnTimeTotal
+						stoveEntity.inventoryChanged();
+						//LOGGER.debug("Reset burnTime to 0 at {}", pos);
+					}
+
 					level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0F, 1.0F);
 					level.setBlock(pos, state.setValue(LIT, false), 3);
 					if (!player.isCreative()) {

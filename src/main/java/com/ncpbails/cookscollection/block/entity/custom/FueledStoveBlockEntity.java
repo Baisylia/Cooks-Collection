@@ -10,12 +10,12 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
@@ -37,6 +37,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import vectorwing.farmersdelight.common.mixin.accessor.RecipeManagerAccessor;
+import vectorwing.farmersdelight.common.registry.ModBlocks;
+import vectorwing.farmersdelight.common.tag.ModTags;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
 
 import javax.annotation.Nullable;
@@ -55,7 +57,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 			inventoryChanged();
 		}
 	};
-	private final ContainerData data = new ContainerData() {
+	public final ContainerData data = new ContainerData() {
 		@Override
 		public int get(int index) {
 			return switch (index) {
@@ -150,18 +152,11 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 	}
 
 	public static void cookingTick(Level level, BlockPos pos, BlockState state, FueledStoveBlockEntity stove) {
-		if (stove.isStoveBlockedAbove()) {
-			if (!ItemUtils.isInventoryEmpty(stove.inventory)) {
-				ItemUtils.dropItems(level, pos, stove.inventory);
-				stove.inventoryChanged();
-			}
-			return;
-		}
-
 		boolean isLit = state.getValue(BlockStateProperties.LIT);
 		ItemStack inputStack = stove.inventory.getStackInSlot(INPUT_SLOT);
 		//LOGGER.debug("Cooking tick at {}: isLit={}, burnTime={}, inputStack={}", pos, isLit, stove.burnTime, inputStack);
 
+		// Handle fuel consumption
 		if (isLit && stove.burnTime <= 0 && !inputStack.isEmpty()) {
 			int fuelBurnTime = ForgeHooks.getBurnTime(inputStack, RecipeType.SMELTING);
 			if (fuelBurnTime > 0) {
@@ -180,10 +175,11 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 			}
 		}
 
+		// Process fuel burning and cooking (only cook if not blocked by invalid block)
 		if (isLit && stove.burnTime > 0) {
 			stove.burnTime--;
 			//LOGGER.debug("Decremented burnTime to {} at {}", stove.burnTime, pos);
-			if (!inputStack.isEmpty()) {
+			if (!stove.isStoveBlockedAbove() && !inputStack.isEmpty()) {
 				Optional<CampfireCookingRecipe> recipe = stove.getMatchingRecipe(inputStack);
 				if (recipe.isPresent()) {
 					stove.cookingTime++;
@@ -273,8 +269,13 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 	public boolean isStoveBlockedAbove() {
 		if (level != null) {
 			BlockState above = level.getBlockState(worldPosition.above());
+			// Allow specific heat receivers like Cooking Pot or Oven
+			if (above.is(ModBlocks.COOKING_POT.get()) || above.is(com.ncpbails.cookscollection.block.ModBlocks.OVEN.get())) {
+				return false;
+			}
+			// Check for solid blocks that block cooking
 			boolean blocked = Shapes.joinIsNotEmpty(GRILLING_AREA, above.getShape(level, worldPosition.above()), BooleanOp.AND);
-			//LOGGER.debug("Stove at {} blocked above: {}", worldPosition, blocked);
+			//LOGGER.debug("Stove at {} blocked above: {}, block above: {}", worldPosition, blocked, above.getBlock());
 			return blocked;
 		}
 		return false;
@@ -288,7 +289,7 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 		return items;
 	}
 
-	private void inventoryChanged() {
+	public void inventoryChanged() {
 		setChanged();
 		if (level != null) {
 			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -304,8 +305,8 @@ public class FueledStoveBlockEntity extends BlockEntity implements MenuProvider 
 
 	@Nullable
 	@Override
-	public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+	public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
 		//LOGGER.info("Creating FueledStoveMenu for containerId: {}", containerId);
-		return new FueledStoveMenu(containerId, inventory, this, this.data);
+		return new FueledStoveMenu(containerId, playerInventory, this, this.data);
 	}
 }

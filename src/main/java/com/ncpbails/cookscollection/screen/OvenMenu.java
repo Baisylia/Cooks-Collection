@@ -57,10 +57,10 @@ public class OvenMenu extends RecipeBookMenu<SimpleContainer> {
         addDataSlots(data);
 
         // Log slot setup for debugging
-        System.out.println("OvenMenu slots: ");
-        for (int i = 0; i < slots.size(); i++) {
-            System.out.println("Slot " + i + ": x=" + slots.get(i).x + ", y=" + slots.get(i).y);
-        }
+//        System.out.println("OvenMenu slots: ");
+//        for (int i = 0; i < slots.size(); i++) {
+//            System.out.println("Slot " + i + ": x=" + slots.get(i).x + ", y=" + slots.get(i).y);
+//        }
     }
 
     public boolean isCrafting() {

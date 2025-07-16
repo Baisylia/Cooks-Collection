@@ -24,8 +24,15 @@ public class FueledStoveScreen extends AbstractContainerScreen<FueledStoveMenu> 
     @Override
     public void init() {
         super.init();
+
+        // Corner Position
+        //this.titleLabelX = 7;
+        //this.titleLabelY = 6;
+
+        // Middle Position
         this.titleLabelX = 56;
-        this.titleLabelY = 34;
+        this.titleLabelY = 33;
+
         this.inventoryLabelX = 8;
         this.inventoryLabelY = this.imageHeight - 94;
     }
