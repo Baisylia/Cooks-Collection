@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_wheat_dough": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["farmersdelight:wheat_dough"]
+          }
+        ]
+      }
+    },
+    "has_lemon": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["cookscollection:lemon"]
+          }
+        ]
+      }
+    },
+    "has_sugar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["minecraft:sugar"]
+          }
+        ]
+      }
+    },
+    "has_salt": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["cookscollection:salt"]
+          }
+        ]
+      }
+    },
+    "has_poppy": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["minecraft:poppy"]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "cookscollection:baking/lemon_muffin"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_wheat_dough",
+      "has_lemon",
+      "has_sugar",
+      "has_salt",
+      "has_poppy",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cookscollection:baking/lemon_muffin"
+    ]
+  },
+  "sends_telemetry_event": false
+}

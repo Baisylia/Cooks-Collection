@@ -1,0 +1,37 @@
+{
+  "parent": "cookscollection:main/root",
+  "criteria": {
+    "oven": {
+      "conditions": {
+        "location": [
+          {
+            "block": "cookscollection:oven",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "cookscollection.advancement.place_oven.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "cookscollection:oven"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "cookscollection.advancement.place_oven"
+    }
+  },
+  "requirements": [
+    [
+      "oven"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,24 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 200,
+  "ingredients": [
+    {
+		"item": "farmersdelight:wheat_dough"
+    },
+	{
+		"item": "cookscollection:lemon"
+    },
+    {
+		"item": "minecraft:sugar"
+    },
+    {
+		"item": "cookscollection:salt"
+    },
+    {
+      "item": "minecraft:poppy"
+    }
+  ],
+  "result": {
+    "item": "cookscollection:lemon_muffin"
+  }
+}
