@@ -1,24 +1,14 @@
 {
   "type": "cookscollection:baking",
   "cooktime": 200,
+  "experience": 0.7,
   "ingredients": [
-    {
-		"item": "farmersdelight:wheat_dough"
-    },
-	{
-		"item": "cookscollection:lemon"
-    },
-    {
-		"item": "minecraft:sugar"
-    },
-    {
-		"item": "cookscollection:salt"
-    },
-    {
-      "item": "minecraft:poppy"
-    }
+    {"item": "farmersdelight:wheat_dough"},
+    {"item": "cookscollection:lemon"},
+    {"item": "minecraft:sugar"},
+    {"item": "cookscollection:salt"},
+    {"item": "minecraft:poppy"}
   ],
-  "result": {
-    "item": "cookscollection:lemon_muffin"
-  }
+  "result": {"item": "cookscollection:lemon_muffin"},
+  "recipe_book_tab": "DESSERTS"
 }
