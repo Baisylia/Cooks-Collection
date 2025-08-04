@@ -48,6 +48,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
     private int maxProgress = 72;
     private int litTime = 0;
     private ResourceLocation lastRecipeID;
+    private float experienceToDrop = 0.0F;
     static int countOutput = 1;
     private ContainerOpenersCounter openersCounter;
 
@@ -55,13 +56,27 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
-            // Only reset lastRecipeID for input slots (0-8)
             if (slot < 9) {
-                // Check if the change preserves the current recipe
                 if (!isSameRecipe()) {
                     lastRecipeID = null;
                 }
             }
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (slot == 9 && !simulate && !level.isClientSide) {
+                ItemStack extracted = super.extractItem(slot, amount, simulate);
+                if (!extracted.isEmpty() && experienceToDrop > 0) {
+                    float xpPerItem = experienceToDrop / getTheCount(extracted);
+                    float totalXp = xpPerItem * amount;
+                    spawnExperience(level, worldPosition, totalXp);
+                    experienceToDrop = Math.max(0, experienceToDrop - totalXp);
+                    setChanged();
+                }
+                return extracted;
+            }
+            return super.extractItem(slot, amount, simulate);
         }
 
         private boolean isSameRecipe() {
@@ -171,6 +186,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         tag.putInt("oven.progress", progress);
         tag.putInt("oven.lit_time", litTime);
         tag.putInt("oven.max_progress", maxProgress);
+        tag.putFloat("oven.experience", experienceToDrop);
         if (lastRecipeID != null) {
             tag.putString("LastRecipe", lastRecipeID.toString());
         }
@@ -184,6 +200,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         progress = nbt.getInt("oven.progress");
         litTime = nbt.getInt("oven.lit_time");
         maxProgress = nbt.getInt("oven.max_progress");
+        experienceToDrop = nbt.getFloat("oven.experience");
         if (nbt.contains("LastRecipe")) {
             lastRecipeID = new ResourceLocation(nbt.getString("LastRecipe"));
         }
@@ -195,6 +212,10 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             inventory.setItem(i, itemHandler.getStackInSlot(i));
         }
         Containers.dropContents(this.level, this.worldPosition, inventory);
+        if (experienceToDrop > 0 && !this.level.isClientSide) {
+            spawnExperience(this.level, this.worldPosition, experienceToDrop);
+            experienceToDrop = 0;
+        }
     }
 
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, OvenBlockEntity pBlockEntity) {
@@ -319,10 +340,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             if (outputSlot.isEmpty() || outputSlot.is(result.getItem())) {
                 int newCount = outputSlot.getCount() + result.getCount();
                 entity.itemHandler.setStackInSlot(9, new ItemStack(result.getItem(), newCount));
-            }
-
-            if (experience > 0) {
-                spawnExperience(level, entity.worldPosition, experience);
+                entity.experienceToDrop += experience * result.getCount();
             }
 
             entity.resetProgress();
