@@ -1,0 +1,66 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_wheat_dough": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["farmersdelight:wheat_dough"]
+          }
+        ]
+      }
+    },
+    "has_cocoa": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["minecraft:cocoa_beans"]
+          }
+        ]
+      }
+    },
+    "has_sugar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["minecraft:sugar"]
+          }
+        ]
+      }
+    },
+    "has_salt": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["cookscollection:salt"]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "cookscollection:baking/chocolate_muffin"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_wheat_dough",
+      "has_cocoa",
+      "has_sugar",
+      "has_salt",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cookscollection:baking/chocolate_muffin"
+    ]
+  },
+  "sends_telemetry_event": false
+}
