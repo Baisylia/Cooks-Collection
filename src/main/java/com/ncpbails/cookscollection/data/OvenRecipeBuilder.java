@@ -34,17 +34,23 @@ public class OvenRecipeBuilder {
     private final Item result;
     private final int count;
     private final int cookingTime;
+    private final float experience;
     private final Advancement.Builder advancement = Advancement.Builder.advancement();
 
-    private OvenRecipeBuilder(ItemLike resultIn, int count, int cookingTime) {
+    private OvenRecipeBuilder(ItemLike resultIn, int count, int cookingTime, float experience) {
         this.result = resultIn.asItem();
         this.count = count;
         this.cookingTime = cookingTime;
+        this.experience = experience;
         this.tab = null;
     }
 
     public static OvenRecipeBuilder ovenRecipe(ItemLike mainResult, int count, int cookingTime) {
-        return new OvenRecipeBuilder(mainResult, count, cookingTime);
+        return new OvenRecipeBuilder(mainResult, count, cookingTime, 0.0F);
+    }
+
+    public static OvenRecipeBuilder ovenRecipe(ItemLike mainResult, int count, int cookingTime, float experience) {
+        return new OvenRecipeBuilder(mainResult, count, cookingTime, experience);
     }
 
     public OvenRecipeBuilder addIngredient(TagKey<Item> tagIn) {
@@ -109,9 +115,9 @@ public class OvenRecipeBuilder {
                     .rewards(AdvancementRewards.Builder.recipe(id))
                     .requirements(RequirementsStrategy.OR);
             ResourceLocation advancementId = new ResourceLocation(id.getNamespace(), "recipes/oven/" + id.getPath());
-            consumerIn.accept(new Result(id, result, count, ingredients, cookingTime, tab, advancement, advancementId));
+            consumerIn.accept(new Result(id, result, count, ingredients, cookingTime, experience, tab, advancement, advancementId));
         } else {
-            consumerIn.accept(new Result(id, result, count, ingredients, cookingTime, tab));
+            consumerIn.accept(new Result(id, result, count, ingredients, cookingTime, experience, tab));
         }
     }
 
@@ -122,22 +128,24 @@ public class OvenRecipeBuilder {
         private final Item result;
         private final int count;
         private final int cookingTime;
+        private final float experience;
         private final Advancement.Builder advancement;
         private final ResourceLocation advancementId;
 
-        public Result(ResourceLocation idIn, Item resultIn, int countIn, List<Ingredient> ingredientsIn, int cookingTimeIn, @Nullable OvenRecipeBookTab tabIn, @Nullable Advancement.Builder advancement, @Nullable ResourceLocation advancementId) {
+        public Result(ResourceLocation idIn, Item resultIn, int countIn, List<Ingredient> ingredientsIn, int cookingTimeIn, float experienceIn, @Nullable OvenRecipeBookTab tabIn, @Nullable Advancement.Builder advancement, @Nullable ResourceLocation advancementId) {
             this.id = idIn;
             this.tab = tabIn;
             this.ingredients = ingredientsIn;
             this.result = resultIn;
             this.count = countIn;
             this.cookingTime = cookingTimeIn;
+            this.experience = experienceIn;
             this.advancement = advancement;
             this.advancementId = advancementId;
         }
 
-        public Result(ResourceLocation idIn, Item resultIn, int countIn, List<Ingredient> ingredientsIn, int cookingTimeIn, @Nullable OvenRecipeBookTab tabIn) {
-            this(idIn, resultIn, countIn, ingredientsIn, cookingTimeIn, tabIn, null, null);
+        public Result(ResourceLocation idIn, Item resultIn, int countIn, List<Ingredient> ingredientsIn, int cookingTimeIn, float experienceIn, @Nullable OvenRecipeBookTab tabIn) {
+            this(idIn, resultIn, countIn, ingredientsIn, cookingTimeIn, experienceIn, tabIn, null, null);
         }
 
         @Override
@@ -160,6 +168,7 @@ public class OvenRecipeBuilder {
             json.add("result", objectResult);
 
             json.addProperty("cooktime", cookingTime);
+            json.addProperty("experience", experience);
         }
 
         @Override

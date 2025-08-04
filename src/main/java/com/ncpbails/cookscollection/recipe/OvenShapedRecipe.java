@@ -40,16 +40,18 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
     private final int cookTime;
+    private final float experience;
     private final boolean isSimple;
     private final OvenRecipeBookTab recipeBookTab;
 
-    public OvenShapedRecipe(int width, int height, ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime, @Nullable OvenRecipeBookTab recipeBookTab) {
+    public OvenShapedRecipe(int width, int height, ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime, float experience, @Nullable OvenRecipeBookTab recipeBookTab) {
         this.width = width;
         this.height = height;
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.cookTime = cookTime;
+        this.experience = experience;
         this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
         this.recipeBookTab = recipeBookTab;
     }
@@ -78,6 +80,10 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
         return this.cookTime;
     }
 
+    public float getExperience() {
+        return this.experience;
+    }
+
     @Nullable
     public OvenRecipeBookTab getRecipeBookTab() {
         return this.recipeBookTab;
@@ -96,65 +102,59 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
 
         boolean[][] slotUsed = new boolean[3][3]; // Track which slots are used
 
-        // Iterate over the crafting grid
         for (int offsetX = 0; offsetX <= 3 - this.getWidth(); ++offsetX) {
             for (int offsetY = 0; offsetY <= 3 - this.getHeight(); ++offsetY) {
                 if (checkIngredients(pContainer, offsetX, offsetY, slotUsed)) {
                     if (areOtherSlotsEmpty(pContainer, offsetX, offsetY)) {
-                        return true; // Match found, return true
+                        return true;
                     }
                 }
             }
         }
 
-        return false; // No match found
+        return false;
     }
 
     private boolean areOtherSlotsEmpty(SimpleContainer pContainer, int offsetX, int offsetY) {
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 if (i < offsetX || i >= offsetX + this.getWidth() || j < offsetY || j >= offsetY + this.getHeight()) {
-                    ItemStack itemStack = pContainer.getItem(i + j * 3); // Use a fixed grid size of 3x3
+                    ItemStack itemStack = pContainer.getItem(i + j * 3);
                     if (!itemStack.isEmpty()) {
-                        return false; // Slot is not empty
+                        return false;
                     }
                 }
             }
         }
-        return true; // All other slots are empty
+        return true;
     }
 
     private boolean checkIngredients(SimpleContainer pContainer, int offsetX, int offsetY, boolean[][] slotUsed) {
-        // Iterate over the recipe's dimensions
         for (int i = 0; i < this.getWidth(); ++i) {
             for (int j = 0; j < this.getHeight(); ++j) {
                 int gridX = i + offsetX;
                 int gridY = j + offsetY;
 
-                // Check if the current position is within the crafting grid
                 if (gridX >= 3 || gridY >= 3) {
                     continue;
                 }
 
-                // Check if the slot is already used by another recipe
                 if (slotUsed[gridX][gridY]) {
                     return false;
                 }
 
                 Ingredient recipeIngredient = this.recipeItems.get(i + j * this.getWidth());
-                ItemStack gridStack = pContainer.getItem(gridX + gridY * 3); // Use a fixed grid size of 3x3
+                ItemStack gridStack = pContainer.getItem(gridX + gridY * 3);
 
-                // Check if the ingredient matches the item in the crafting grid
                 if (!recipeIngredient.test(gridStack)) {
                     return false;
                 }
 
-                // Mark the slot as used
                 slotUsed[gridX][gridY] = true;
             }
         }
 
-        return true; // All ingredients matched
+        return true;
     }
 
     @Override
@@ -336,9 +336,10 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
             NonNullList<Ingredient> nonNullList = dissolvePattern(astring, map, width, height);
             ItemStack itemStack = itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
             int cookTimeIn = GsonHelper.getAsInt(json, "cooktime", 200);
+            float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
             String tabName = GsonHelper.getAsString(json, "recipe_book_tab", null);
             OvenRecipeBookTab tab = tabName != null ? OvenRecipeBookTab.findByName(tabName) : null;
-            return new OvenShapedRecipe(width, height, id, itemStack, nonNullList, cookTimeIn, tab);
+            return new OvenShapedRecipe(width, height, id, itemStack, nonNullList, cookTimeIn, experience, tab);
         }
 
         @Override
@@ -351,9 +352,10 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
             }
             ItemStack itemStack = buf.readItem();
             int cookTimeIn = buf.readVarInt();
+            float experience = buf.readFloat();
             String tabName = buf.readUtf();
             OvenRecipeBookTab tab = tabName.isEmpty() ? null : OvenRecipeBookTab.findByName(tabName);
-            return new OvenShapedRecipe(width, height, id, itemStack, nonNullList, cookTimeIn, tab);
+            return new OvenShapedRecipe(width, height, id, itemStack, nonNullList, cookTimeIn, experience, tab);
         }
 
         @Override
@@ -365,6 +367,7 @@ public class OvenShapedRecipe implements Recipe<SimpleContainer> {
             }
             buf.writeItem(recipe.getResultItem(RegistryAccess.EMPTY));
             buf.writeVarInt(recipe.cookTime);
+            buf.writeFloat(recipe.experience);
             buf.writeUtf(recipe.recipeBookTab != null ? recipe.recipeBookTab.name : "");
         }
     }

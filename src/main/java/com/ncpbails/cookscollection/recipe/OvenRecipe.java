@@ -28,14 +28,16 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
     private final int cookTime;
+    private final float experience;
     private final boolean isSimple;
     private final OvenRecipeBookTab recipeBookTab;
 
-    public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime, @Nullable OvenRecipeBookTab recipeBookTab) {
+    public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime, float experience, @Nullable OvenRecipeBookTab recipeBookTab) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.cookTime = cookTime;
+        this.experience = experience;
         this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
         this.recipeBookTab = recipeBookTab;
     }
@@ -62,6 +64,10 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
     public int getCookTime() {
         return this.cookTime;
+    }
+
+    public float getExperience() {
+        return this.experience;
     }
 
     @Nullable
@@ -133,9 +139,10 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
             } else {
                 ItemStack itemStack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
                 int cookTimeIn = GsonHelper.getAsInt(json, "cooktime", 200);
+                float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
                 String tabName = GsonHelper.getAsString(json, "recipe_book_tab", null);
                 OvenRecipeBookTab tab = tabName != null ? OvenRecipeBookTab.findByName(tabName) : null;
-                return new OvenRecipe(resourceLocation, itemStack, inputs, cookTimeIn, tab);
+                return new OvenRecipe(resourceLocation, itemStack, inputs, cookTimeIn, experience, tab);
             }
         }
 
@@ -162,9 +169,10 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
             ItemStack itemStack = buf.readItem();
             int cookTimeIn = buf.readVarInt();
+            float experience = buf.readFloat();
             String tabName = buf.readUtf(32767);
             OvenRecipeBookTab tab = tabName.isEmpty() ? null : OvenRecipeBookTab.findByName(tabName);
-            return new OvenRecipe(id, itemStack, inputs, cookTimeIn, tab);
+            return new OvenRecipe(id, itemStack, inputs, cookTimeIn, experience, tab);
         }
 
         @Override
@@ -177,6 +185,7 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
             buf.writeItem(recipe.getResultItem(RegistryAccess.EMPTY));
             buf.writeVarInt(recipe.cookTime);
+            buf.writeFloat(recipe.experience);
             buf.writeUtf(recipe.recipeBookTab != null ? recipe.recipeBookTab.name : "");
         }
     }
