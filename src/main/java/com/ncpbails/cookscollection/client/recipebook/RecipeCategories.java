@@ -20,11 +20,11 @@ public class RecipeCategories {
     public static final Supplier<RecipeBookCategories> BAKING_SEARCH = Suppliers.memoize(() ->
             RecipeBookCategories.create("BAKING_SEARCH", new ItemStack(Items.COMPASS)));
     public static final Supplier<RecipeBookCategories> BAKING_PASTRIES = Suppliers.memoize(() ->
-            RecipeBookCategories.create("BAKING_PASTRIES", new ItemStack(Items.BREAD)));
+            RecipeBookCategories.create("BAKING_PASTRIES", new ItemStack(Items.COOKIE)));
     public static final Supplier<RecipeBookCategories> BAKING_DESSERTS = Suppliers.memoize(() ->
             RecipeBookCategories.create("BAKING_DESSERTS", new ItemStack(Items.CAKE)));
     public static final Supplier<RecipeBookCategories> BAKING_MISC = Suppliers.memoize(() ->
-            RecipeBookCategories.create("BAKING_MISC", new ItemStack(Items.COOKIE)));
+            RecipeBookCategories.create("BAKING_MISC", new ItemStack(Items.BREAD)));
 
     public static void init(RegisterRecipeBookCategoriesEvent event) {
         event.registerBookCategories(ModRecipeBookTypes.OVEN,
@@ -64,4 +64,5 @@ public class RecipeCategories {
             return BAKING_MISC.get();
         });
     }
+
 }
