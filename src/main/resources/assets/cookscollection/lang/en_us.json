@@ -19,7 +19,6 @@
   "cookscollection.subtitles.fruiting_leaves.pick_fruit": "Fruit picked",
 
   "block.cookscollection.oven": "Oven",
-  "block.cookscollection.fueled_stove": "Fueled Stove",
   "block.cookscollection.lemon_log": "Lemon Log",
   "block.cookscollection.lemon_wood": "Lemon Wood",
   "block.cookscollection.lemon_leaves": "Lemon Leaves",
@@ -29,8 +28,6 @@
   "block.cookscollection.rustic_loaf": "Rustic Loaf",
   "block.cookscollection.salted_dripstone_block": "Salt Block",
 
-  "container.cookscollection.fueled_stove.heated": "Stove is burning",
-  "container.cookscollection.fueled_stove.not_heated": "Stove is not burning",
   "container.cookscollection.oven.heated": "Heated",
   "container.cookscollection.oven.not_heated": "Needs heat from below",
   "gui.cookscollection.recipebook.search_hint": "Showing Cookable",
@@ -42,5 +39,6 @@
 
   "cookscollection.advancement.place_oven": "What's in the Oven?",
   "cookscollection.advancement.place_oven.desc": "Put down an Oven and get ready to cook!"
+
 
 }
