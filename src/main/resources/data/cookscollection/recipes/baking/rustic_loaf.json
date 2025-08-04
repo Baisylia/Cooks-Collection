@@ -1,21 +1,13 @@
 {
   "type": "cookscollection:baking",
   "cooktime": 200,
+  "experience": 0.7,
   "ingredients": [
-    {
-		"item": "farmersdelight:wheat_dough"
-    },
-	{
-		"item": "farmersdelight:wheat_dough"
-    },
-    {
-		"item": "minecraft:sugar"
-    },
-    {
-		"item": "cookscollection:salt"
-    }
+    {"item": "farmersdelight:wheat_dough"},
+    {"item": "farmersdelight:wheat_dough"},
+    {"item": "minecraft:sugar"},
+    {"item": "cookscollection:salt"}
   ],
-  "result": {
-    "item": "cookscollection:rustic_loaf"
-  }
+  "result": {"item": "cookscollection:rustic_loaf"},
+  "recipe_book_tab": "PASTRIES"
 }
