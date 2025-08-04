@@ -29,5 +29,16 @@
   "block.cookscollection.salted_dripstone_block": "Salt Block",
 
   "container.cookscollection.oven.heated": "Heated",
-  "container.cookscollection.oven.not_heated": "Needs heat from below"
+  "container.cookscollection.oven.not_heated": "Needs heat from below",
+  "gui.cookscollection.recipebook.search_hint": "Showing Cookable",
+
+  "itemGroup.cookscollection": "Cook's Collection",
+
+  "cookscollection.advancement.root": "Cook's Collection",
+  "cookscollection.advancement.root.desc": "Anyone can cook!",
+
+  "cookscollection.advancement.place_oven": "What's in the Oven?",
+  "cookscollection.advancement.place_oven.desc": "Put down an Oven and get ready to cook!"
+
+
 }

@@ -11,11 +11,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -36,10 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import vectorwing.farmersdelight.common.tag.ModTags;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
-
-import static com.ncpbails.cookscollection.block.custom.OvenBlock.LIT;
 
 public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
@@ -47,6 +47,8 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
     private int progress = 0;
     private int maxProgress = 72;
     private int litTime = 0;
+    private ResourceLocation lastRecipeID;
+    private float experienceToDrop = 0.0F;
     static int countOutput = 1;
     private ContainerOpenersCounter openersCounter;
 
@@ -54,6 +56,45 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            if (slot < 9) {
+                if (!isSameRecipe()) {
+                    lastRecipeID = null;
+                }
+            }
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (slot == 9 && !simulate && !level.isClientSide) {
+                ItemStack extracted = super.extractItem(slot, amount, simulate);
+                if (!extracted.isEmpty() && experienceToDrop > 0) {
+                    float xpPerItem = experienceToDrop / getTheCount(extracted);
+                    float totalXp = xpPerItem * amount;
+                    spawnExperience(level, worldPosition, totalXp);
+                    experienceToDrop = Math.max(0, experienceToDrop - totalXp);
+                    setChanged();
+                }
+                return extracted;
+            }
+            return super.extractItem(slot, amount, simulate);
+        }
+
+        private boolean isSameRecipe() {
+            SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
+            for (int i = 0; i < itemHandler.getSlots(); i++) {
+                inventory.setItem(i, itemHandler.getStackInSlot(i));
+            }
+            Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
+                    .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
+            Optional<OvenRecipe> recipeMatch = level.getRecipeManager()
+                    .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
+            ResourceLocation currentRecipeID = null;
+            if (shapedMatch.isPresent()) {
+                currentRecipeID = shapedMatch.get().getId();
+            } else if (recipeMatch.isPresent()) {
+                currentRecipeID = recipeMatch.get().getId();
+            }
+            return lastRecipeID != null && lastRecipeID.equals(currentRecipeID);
         }
     };
 
@@ -72,10 +113,10 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             }
 
             public void set(int index, int value) {
-                switch(index) {
-                    case 0: OvenBlockEntity.this.progress = value; break;
-                    case 1: OvenBlockEntity.this.maxProgress = value; break;
-                    case 2: OvenBlockEntity.this.litTime = value; break;
+                switch (index) {
+                    case 0 -> OvenBlockEntity.this.progress = value;
+                    case 1 -> OvenBlockEntity.this.maxProgress = value;
+                    case 2 -> OvenBlockEntity.this.litTime = value;
                 }
             }
 
@@ -99,11 +140,10 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
             protected boolean isOwnContainer(Player player) {
                 if (player.containerMenu instanceof OvenMenu) {
-                    BlockEntity be = ((OvenMenu)player.containerMenu).getBlockEntity();
+                    BlockEntity be = ((OvenMenu) player.containerMenu).getBlockEntity();
                     return be == OvenBlockEntity.this;
-                } else {
-                    return false;
                 }
+                return false;
             }
         };
     }
@@ -119,13 +159,12 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         return new OvenMenu(pContainerId, pInventory, this, this.data);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @javax.annotation.Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return lazyItemHandler.cast();
         }
-
         return super.getCapability(cap, side);
     }
 
@@ -136,7 +175,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     @Override
-    public void invalidateCaps()  {
+    public void invalidateCaps() {
         super.invalidateCaps();
         lazyItemHandler.invalidate();
     }
@@ -147,6 +186,10 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         tag.putInt("oven.progress", progress);
         tag.putInt("oven.lit_time", litTime);
         tag.putInt("oven.max_progress", maxProgress);
+        tag.putFloat("oven.experience", experienceToDrop);
+        if (lastRecipeID != null) {
+            tag.putString("LastRecipe", lastRecipeID.toString());
+        }
         super.saveAdditional(tag);
     }
 
@@ -157,6 +200,10 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         progress = nbt.getInt("oven.progress");
         litTime = nbt.getInt("oven.lit_time");
         maxProgress = nbt.getInt("oven.max_progress");
+        experienceToDrop = nbt.getFloat("oven.experience");
+        if (nbt.contains("LastRecipe")) {
+            lastRecipeID = new ResourceLocation(nbt.getString("LastRecipe"));
+        }
     }
 
     public void drops() {
@@ -164,10 +211,12 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             inventory.setItem(i, itemHandler.getStackInSlot(i));
         }
-
         Containers.dropContents(this.level, this.worldPosition, inventory);
+        if (experienceToDrop > 0 && !this.level.isClientSide) {
+            spawnExperience(this.level, this.worldPosition, experienceToDrop);
+            experienceToDrop = 0;
+        }
     }
-
 
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, OvenBlockEntity pBlockEntity) {
         pBlockEntity.recheckOpen();
@@ -183,7 +232,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         if (hasRecipe(pBlockEntity)) {
             pBlockEntity.progress++;
             setChanged(pLevel, pPos, pState);
-            if (pBlockEntity.progress > pBlockEntity.maxProgress) {
+            if (pBlockEntity.progress >= pBlockEntity.maxProgress) {
                 craftItem(pBlockEntity);
             }
         } else {
@@ -196,7 +245,6 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         Level level = entity.level;
         BlockPos pos = entity.getBlockPos();
 
-        // Check if the oven is fueled (lit)
         if (!isFueled(entity, pos, level)) {
             return false;
         }
@@ -206,40 +254,43 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        // Check for OvenShapedRecipe
         Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
                 .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
-
-        // Check for OvenRecipe
         Optional<OvenRecipe> recipeMatch = level.getRecipeManager()
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
         if (shapedMatch.isPresent()) {
-            entity.maxProgress = shapedMatch.get().getCookTime();
+            ResourceLocation newRecipeID = shapedMatch.get().getId();
+            if (entity.lastRecipeID == null || !entity.lastRecipeID.equals(newRecipeID)) {
+                entity.progress = 0;
+                entity.maxProgress = shapedMatch.get().getCookTime();
+                entity.lastRecipeID = newRecipeID;
+            }
             return true;
         } else if (recipeMatch.isPresent()) {
-            entity.maxProgress = recipeMatch.get().getCookTime();
+            ResourceLocation newRecipeID = recipeMatch.get().getId();
+            if (entity.lastRecipeID == null || !entity.lastRecipeID.equals(newRecipeID)) {
+                entity.progress = 0;
+                entity.maxProgress = recipeMatch.get().getCookTime();
+                entity.lastRecipeID = newRecipeID;
+            }
             return true;
         }
-
         return false;
     }
-
 
     static boolean isFueled(OvenBlockEntity entity, BlockPos pos, Level level) {
         BlockState stateBelow = level.getBlockState(pos.below());
         if (stateBelow.hasProperty(BlockStateProperties.LIT) ? stateBelow.getValue(BlockStateProperties.LIT) : true) {
             if (stateBelow.is(ModTags.HEAT_SOURCES) || stateBelow.is(ModTags.HEAT_CONDUCTORS)) {
-                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(true)), 3);
+                level.setBlock(pos, entity.getBlockState().setValue(OvenBlock.LIT, Boolean.TRUE), 3);
                 return true;
-            }
-            else {
-                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(false)), 3);
+            } else {
+                level.setBlock(pos, entity.getBlockState().setValue(OvenBlock.LIT, Boolean.FALSE), 3);
                 return false;
             }
-        }
-        else {
-            level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(false)), 3);
+        } else {
+            level.setBlock(pos, entity.getBlockState().setValue(OvenBlock.LIT, Boolean.FALSE), 3);
             return false;
         }
     }
@@ -251,92 +302,92 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        // Check for OvenShapedRecipe
+        assert level != null;
         Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
                 .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
-
-        // Check for OvenRecipe
         Optional<OvenRecipe> recipeMatch = level.getRecipeManager()
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
+        ItemStack result = ItemStack.EMPTY;
+        float experience = 0.0F;
         if (shapedMatch.isPresent()) {
-            for(int i = 0; i < 9; ++i) {
-                ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
-                if (slotStack.hasCraftingRemainingItem()) {
-                    Direction direction = ((Direction)entity.getBlockState().getValue(OvenBlock.FACING)).getCounterClockWise();
-                    double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
-                    double y = (double)entity.worldPosition.getY() + 0.7;
-                    double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-                    spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
-                }
-            }
-
-            for (int i = 0; i < 9; ++i) {
-                entity.itemHandler.extractItem(i, 1, false);
-            }
-            inventory.getItem(9).is(shapedMatch.get().getResultItem().getItem());
-
-            entity.itemHandler.setStackInSlot(9, new ItemStack(shapedMatch.get().getResultItem().getItem(),
-                    entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(shapedMatch.get().getResultItem())));
-
-            entity.resetProgress();
-
+            result = shapedMatch.get().getResultItem(level.registryAccess());
+            experience = shapedMatch.get().getExperience();
+            entity.maxProgress = shapedMatch.get().getCookTime();
+            entity.lastRecipeID = shapedMatch.get().getId();
         } else if (recipeMatch.isPresent()) {
-            for(int i = 0; i < 9; ++i) {
+            result = recipeMatch.get().getResultItem(level.registryAccess());
+            experience = recipeMatch.get().getExperience();
+            entity.maxProgress = recipeMatch.get().getCookTime();
+            entity.lastRecipeID = recipeMatch.get().getId();
+        }
+
+        if (!result.isEmpty()) {
+            for (int i = 0; i < 9; ++i) {
                 ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
                 if (slotStack.hasCraftingRemainingItem()) {
-                    Direction direction = ((Direction)entity.getBlockState().getValue(OvenBlock.FACING)).getCounterClockWise();
-                    double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
-                    double y = (double)entity.worldPosition.getY() + 0.7;
-                    double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-                    spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
+                    Direction direction = entity.getBlockState().getValue(OvenBlock.FACING).getCounterClockWise();
+                    double x = entity.worldPosition.getX() + 0.5 + direction.getStepX() * 0.25;
+                    double y = entity.worldPosition.getY() + 0.7;
+                    double z = entity.worldPosition.getZ() + 0.5 + direction.getStepZ() * 0.25;
+                    spawnItemEntity(entity.level, slotStack.getCraftingRemainingItem(), x, y, z,
+                            direction.getStepX() * 0.08F, 0.25, direction.getStepZ() * 0.08F);
                 }
-            }
-
-            for (int i = 0; i < 9; ++i) {
                 entity.itemHandler.extractItem(i, 1, false);
             }
-            inventory.getItem(9).is(recipeMatch.get().getResultItem().getItem());
 
-            entity.itemHandler.setStackInSlot(9, new ItemStack(recipeMatch.get().getResultItem().getItem(),
-                    entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(recipeMatch.get().getResultItem())));
+            ItemStack outputSlot = entity.itemHandler.getStackInSlot(9);
+            if (outputSlot.isEmpty() || outputSlot.is(result.getItem())) {
+                int newCount = outputSlot.getCount() + result.getCount();
+                entity.itemHandler.setStackInSlot(9, new ItemStack(result.getItem(), newCount));
+                entity.experienceToDrop += experience * result.getCount();
+            }
 
             entity.resetProgress();
         }
     }
+
+    private static void spawnExperience(Level level, BlockPos pos, float experience) {
+        if (!level.isClientSide) {
+            int exp = (int) experience;
+            float fractional = experience - exp;
+            if (fractional > level.random.nextFloat()) {
+                exp++;
+            }
+            ExperienceOrb.award((ServerLevel) level, pos.getCenter(), exp);
+        }
+    }
+
     public static void spawnItemEntity(Level level, ItemStack stack, double x, double y, double z, double xMotion, double yMotion, double zMotion) {
         ItemEntity entity = new ItemEntity(level, x, y, z, stack);
         entity.setDeltaMovement(xMotion, yMotion, zMotion);
         level.addFreshEntity(entity);
     }
-    private int getTheCount (ItemStack itemIn)
-    {
+
+    private int getTheCount(ItemStack itemIn) {
         return itemIn.getCount();
     }
+
     private void resetProgress() {
         this.progress = 0;
-        this.maxProgress = 72;
     }
 
     public void startOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
             this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
-
     }
 
     public void stopOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
             this.openersCounter.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
-
     }
 
     public void recheckOpen() {
         if (!this.remove) {
             this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
-
     }
 
     void updateBlockState(BlockState state, boolean open) {
@@ -345,18 +396,23 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
 
     void playSound(BlockState state, SoundEvent sound) {
         Vec3i normal = state.getValue(OvenBlock.FACING).getNormal();
-        double x = (double)this.worldPosition.getX() + (double)0.5F + (double)normal.getX() / (double)2.0F;
-        double y = (double)this.worldPosition.getY() + (double)0.5F + (double)normal.getY() / (double)2.0F;
-        double z = (double)this.worldPosition.getZ() + (double)0.5F + (double)normal.getZ() / (double)2.0F;
+        double x = this.worldPosition.getX() + 0.5 + normal.getX() / 2.0;
+        double y = this.worldPosition.getY() + 0.5 + normal.getY() / 2.0;
+        double z = this.worldPosition.getZ() + 0.5 + normal.getZ() / 2.0;
         this.level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
     }
+
+    public void setRecipeUsed(OvenRecipe ovenRecipe) {
+        this.maxProgress = ovenRecipe.getCookTime();
+        this.progress = 0;
+        this.lastRecipeID = ovenRecipe.getId();
+        setChanged();
+    }
+
+    public void setRecipeUsed(OvenShapedRecipe ovenShapedRecipe) {
+        this.maxProgress = ovenShapedRecipe.getCookTime();
+        this.progress = 0;
+        this.lastRecipeID = ovenShapedRecipe.getId();
+        setChanged();
+    }
 }
-
-
-//entity.itemHandler.extractItem(0, 1, false);
-//        entity.itemHandler.extractItem(1, 1, false);
-//        entity.itemHandler.extractItem(2, 1, false);
-//        entity.itemHandler.extractItem(3, 1, false);
-//        entity.itemHandler.extractItem(4, 1, false);
-//        entity.itemHandler.setStackInSlot(3, new ItemStack(ModItems.AVOCADO_TOAST.get(),
-//                entity.itemHandler.getStackInSlot(5).getCount() + 1));

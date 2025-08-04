@@ -1,0 +1,12 @@
+{
+  "type": "cookscollection:baking",
+  "cooktime": 150,
+  "experience": 0.4,
+  "ingredients": [
+    {"item": "minecraft:wheat"},
+    {"item": "minecraft:cocoa_beans"},
+    {"item": "minecraft:wheat"}
+  ],
+  "result": {"item": "minecraft:cookie"},
+  "recipe_book_tab": "PASTRIES"
+}

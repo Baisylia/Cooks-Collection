@@ -3,10 +3,8 @@ package com.ncpbails.cookscollection.integration;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ncpbails.cookscollection.CooksCollection;
 import com.ncpbails.cookscollection.block.ModBlocks;
-import com.ncpbails.cookscollection.item.ModItems;
 import com.ncpbails.cookscollection.recipe.OvenRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -20,16 +18,15 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
-import java.awt.*;
-
 public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
-    public final static ResourceLocation UID = new ResourceLocation(CooksCollection.MOD_ID, "baking");
-    public final static ResourceLocation TEXTURE =
+    public static final ResourceLocation UID = new ResourceLocation(CooksCollection.MOD_ID, "baking");
+    public static final ResourceLocation TEXTURE =
             new ResourceLocation(CooksCollection.MOD_ID, "textures/gui/oven_gui_jei.png");
 
     private final IDrawable background;
@@ -52,13 +49,13 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
     }
 
     @Override
-    public void draw(OvenRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack poseStack, double mouseX, double mouseY) {
+    public void draw(OvenRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         IDrawableAnimated arrow = getArrow(recipe);
-        arrow.draw(poseStack, 63, 19);
-        drawCookTime(recipe, poseStack, 45);
+        arrow.draw(guiGraphics, 63, 19);
+        drawCookTime(recipe, guiGraphics, 45);
     }
 
-    protected void drawCookTime(OvenRecipe recipe, PoseStack poseStack, int y) {
+    protected void drawCookTime(OvenRecipe recipe, GuiGraphics guiGraphics, int y) {
         int cookTime = recipe.getCookTime();
         if (cookTime > 0) {
             int cookTimeSeconds = cookTime / 20;
@@ -66,7 +63,7 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
             Minecraft minecraft = Minecraft.getInstance();
             Font fontRenderer = minecraft.font;
             int stringWidth = fontRenderer.width(timeString);
-            fontRenderer.draw(poseStack, timeString, getWidth() - stringWidth, y, 0xFF808080);
+            guiGraphics.drawString(fontRenderer, timeString, getWidth() - stringWidth, y, 0xFF808080, false);
         }
     }
 
@@ -102,25 +99,33 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
     public void setRecipe(IRecipeLayoutBuilder builder, OvenRecipe recipe, IFocusGroup focuses) {
         int start = 3;
         int offset = 18;
-        int offset2 = offset+offset;
+        int offset2 = offset + offset;
         builder.addSlot(RecipeIngredientRole.INPUT, start, start).addIngredients(recipe.getIngredients().get(0));
         if (recipe.getIngredients().size() > 1) {
-            builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start).addIngredients(recipe.getIngredients().get(1));
+            builder.addSlot(RecipeIngredientRole.INPUT, start + offset, start).addIngredients(recipe.getIngredients().get(1));
             if (recipe.getIngredients().size() > 2) {
-                builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start).addIngredients(recipe.getIngredients().get(2));
+                builder.addSlot(RecipeIngredientRole.INPUT, start + offset2, start).addIngredients(recipe.getIngredients().get(2));
                 if (recipe.getIngredients().size() > 3) {
-                    builder.addSlot(RecipeIngredientRole.INPUT, start, start+offset).addIngredients(recipe.getIngredients().get(3));
+                    builder.addSlot(RecipeIngredientRole.INPUT, start, start + offset).addIngredients(recipe.getIngredients().get(3));
                     if (recipe.getIngredients().size() > 4) {
-                        builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start+offset).addIngredients(recipe.getIngredients().get(4));
+                        builder.addSlot(RecipeIngredientRole.INPUT, start + offset, start + offset).addIngredients(recipe.getIngredients().get(4));
                         if (recipe.getIngredients().size() > 5) {
-                            builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start+offset).addIngredients(recipe.getIngredients().get(5));
+                            builder.addSlot(RecipeIngredientRole.INPUT, start + offset2, start + offset).addIngredients(recipe.getIngredients().get(5));
                             if (recipe.getIngredients().size() > 6) {
-                                builder.addSlot(RecipeIngredientRole.INPUT, start, start+offset2).addIngredients(recipe.getIngredients().get(6));
+                                builder.addSlot(RecipeIngredientRole.INPUT, start, start + offset2).addIngredients(recipe.getIngredients().get(6));
                                 if (recipe.getIngredients().size() > 7) {
-                                    builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start+offset2).addIngredients(recipe.getIngredients().get(7));
+                                    builder.addSlot(RecipeIngredientRole.INPUT, start + offset, start + offset2).addIngredients(recipe.getIngredients().get(7));
                                     if (recipe.getIngredients().size() > 8) {
-                                        builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start+offset2).addIngredients(recipe.getIngredients().get(8));
-        }}}}}}}}
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 97, 21).addItemStack(recipe.getResultItem());
+                                        builder.addSlot(RecipeIngredientRole.INPUT, start + offset2, start + offset2).addIngredients(recipe.getIngredients().get(8));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 97, 21)
+                .addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
     }
 }

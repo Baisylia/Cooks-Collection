@@ -4,8 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.ncpbails.cookscollection.CooksCollection;
+import com.ncpbails.cookscollection.client.recipebook.OvenRecipeBookTab;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -14,10 +16,10 @@ import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.RecipeMatcher;
 
-import java.util.EnumSet;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OvenRecipe implements Recipe<SimpleContainer> {
@@ -26,14 +28,18 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
     private final int cookTime;
+    private final float experience;
     private final boolean isSimple;
+    private final OvenRecipeBookTab recipeBookTab;
 
-    public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime) {
+    public OvenRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int cookTime, float experience, @Nullable OvenRecipeBookTab recipeBookTab) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.cookTime = cookTime;
+        this.experience = experience;
         this.isSimple = recipeItems.stream().allMatch(Ingredient::isSimple);
+        this.recipeBookTab = recipeBookTab;
     }
 
     @Override
@@ -47,7 +53,7 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
         return output.copy();
     }
 
@@ -60,46 +66,51 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
         return this.cookTime;
     }
 
+    public float getExperience() {
+        return this.experience;
+    }
+
+    @Nullable
+    public OvenRecipeBookTab getRecipeBookTab() {
+        return this.recipeBookTab;
+    }
+
     @Override
-    public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        // Check if output slot is already occupied with a different item
-        ItemStack outputSlot = pContainer.getItem(9);
-        if (!outputSlot.isEmpty() && !ItemStack.isSame(this.getResultItem(), outputSlot)) {
+    public boolean matches(SimpleContainer container, Level level) {
+        ItemStack outputSlot = container.getItem(9);
+        if (!outputSlot.isEmpty() && !ItemStack.isSameItemSameTags(this.getResultItem(level.registryAccess()), outputSlot)) {
             return false;
         }
-
-        // Check if output slot is full
         if (!outputSlot.isEmpty() && outputSlot.getCount() >= outputSlot.getMaxStackSize()) {
             return false;
         }
-        StackedContents stackedcontents = new StackedContents();
-        List<ItemStack> inputs = new java.util.ArrayList<>();
+
+        StackedContents stackedContents = new StackedContents();
+        List<ItemStack> inputs = new ArrayList<>();
         int i = 0;
 
-        for(int j = 0; j < 9; ++j) {
-            ItemStack itemstack = pContainer.getItem(j);
-            if (!itemstack.isEmpty()) {
+        for (int j = 0; j < 9; ++j) {
+            ItemStack itemStack = container.getItem(j);
+            if (!itemStack.isEmpty()) {
                 ++i;
-                if (isSimple)
-                    stackedcontents.accountStack(itemstack, 1);
-                else inputs.add(itemstack);
+                if (isSimple) {
+                    stackedContents.accountStack(itemStack, 1);
+                } else {
+                    inputs.add(itemStack);
+                }
             }
-            //stackedcontents.accountStack(itemstack, 1);
         }
-            //return i >= this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, null) :
-                //RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
 
-            //return i >= this.recipeItems.size() && RecipeMatcher.findMatches(inputs, this.recipeItems) != null;
-        return i == this.recipeItems.size() && (isSimple ? stackedcontents.canCraft(this, (IntList)null) : RecipeMatcher.findMatches(inputs,  this.recipeItems) != null);
+        return i == this.recipeItems.size() && (isSimple ? stackedContents.canCraft(this, null) : RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
     }
 
     @Override
-    public ItemStack assemble(SimpleContainer p_44001_) {
-        return output;
+    public ItemStack assemble(SimpleContainer container, RegistryAccess registryAccess) {
+        return output.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int p_43999_, int p_44000_) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
@@ -114,10 +125,11 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
         public static final String ID = "baking";
     }
 
-
-   public static class Serializer implements RecipeSerializer<OvenRecipe> {
+    public static class Serializer implements RecipeSerializer<OvenRecipe> {
         public static final Serializer INSTANCE = new Serializer();
-        private static final ResourceLocation NAME = new ResourceLocation("cookscollection", "baking");
+        private static final ResourceLocation NAME = new ResourceLocation(CooksCollection.MOD_ID, "baking");
+
+        @Override
         public OvenRecipe fromJson(ResourceLocation resourceLocation, JsonObject json) {
             NonNullList<Ingredient> inputs = itemsFromJson(GsonHelper.getAsJsonArray(json, "ingredients"));
             if (inputs.isEmpty()) {
@@ -125,49 +137,56 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
             } else if (inputs.size() > 9) {
                 throw new JsonParseException("Too many ingredients for baking recipe. The maximum is 9");
             } else {
-                ItemStack itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
+                ItemStack itemStack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
                 int cookTimeIn = GsonHelper.getAsInt(json, "cooktime", 200);
-                return new OvenRecipe(resourceLocation, itemstack, inputs, cookTimeIn);
+                float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
+                String tabName = GsonHelper.getAsString(json, "recipe_book_tab", null);
+                OvenRecipeBookTab tab = tabName != null ? OvenRecipeBookTab.findByName(tabName) : null;
+                return new OvenRecipe(resourceLocation, itemStack, inputs, cookTimeIn, experience, tab);
             }
         }
-
 
         private static NonNullList<Ingredient> itemsFromJson(JsonArray ingredientArray) {
-            NonNullList<Ingredient> nonnulllist = NonNullList.create();
+            NonNullList<Ingredient> nonNullList = NonNullList.create();
 
-            for(int i = 0; i < ingredientArray.size(); ++i) {
+            for (int i = 0; i < ingredientArray.size(); ++i) {
                 Ingredient ingredient = Ingredient.fromJson(ingredientArray.get(i));
                 if (!ingredient.isEmpty()) {
-                    nonnulllist.add(ingredient);
+                    nonNullList.add(ingredient);
                 }
             }
-            return nonnulllist;
+            return nonNullList;
         }
-       @Override
-       public OvenRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-           //String s = buf.readUtf();
-           int i = buf.readVarInt();
-           NonNullList<Ingredient> inputs = NonNullList.withSize(i, Ingredient.EMPTY);
 
-           for(int j = 0; j < inputs.size(); ++j) {
-               inputs.set(j, Ingredient.fromNetwork(buf));
-           }
+        @Override
+        public OvenRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
+            int i = buf.readVarInt();
+            NonNullList<Ingredient> inputs = NonNullList.withSize(i, Ingredient.EMPTY);
 
-           ItemStack itemstack = buf.readItem();
-           int cookTimeIn = buf.readVarInt();
-           return new OvenRecipe(id, itemstack, inputs, cookTimeIn);
-       }
+            for (int j = 0; j < inputs.size(); ++j) {
+                inputs.set(j, Ingredient.fromNetwork(buf));
+            }
 
-       @Override
-       public void toNetwork(FriendlyByteBuf buf, OvenRecipe recipe) {
-           buf.writeVarInt(recipe.recipeItems.size());
+            ItemStack itemStack = buf.readItem();
+            int cookTimeIn = buf.readVarInt();
+            float experience = buf.readFloat();
+            String tabName = buf.readUtf(32767);
+            OvenRecipeBookTab tab = tabName.isEmpty() ? null : OvenRecipeBookTab.findByName(tabName);
+            return new OvenRecipe(id, itemStack, inputs, cookTimeIn, experience, tab);
+        }
 
-           for(Ingredient ingredient : recipe.getIngredients()) {
-               ingredient.toNetwork(buf);
-           }
+        @Override
+        public void toNetwork(FriendlyByteBuf buf, OvenRecipe recipe) {
+            buf.writeVarInt(recipe.recipeItems.size());
 
-           buf.writeItem(recipe.getResultItem());
-           buf.writeVarInt(recipe.cookTime);
-       }
+            for (Ingredient ingredient : recipe.getIngredients()) {
+                ingredient.toNetwork(buf);
+            }
+
+            buf.writeItem(recipe.getResultItem(RegistryAccess.EMPTY));
+            buf.writeVarInt(recipe.cookTime);
+            buf.writeFloat(recipe.experience);
+            buf.writeUtf(recipe.recipeBookTab != null ? recipe.recipeBookTab.name : "");
+        }
     }
 }
