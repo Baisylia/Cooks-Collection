@@ -13,7 +13,6 @@ import com.ncpbails.cookscollection.item.ModItems;
 import com.ncpbails.cookscollection.recipe.ModRecipeTypes;
 import com.ncpbails.cookscollection.screen.ModMenuTypes;
 import com.ncpbails.cookscollection.screen.OvenScreen;
-import com.ncpbails.cookscollection.screen.FueledStoveScreen;
 import com.ncpbails.cookscollection.item.ModCreativeTabs;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -57,7 +56,6 @@ public class CooksCollection {
         event.enqueueWork(() -> {
             LOGGER.info("Registering client components for {}", MOD_ID);
             MenuScreens.register(ModMenuTypes.OVEN_MENU.get(), OvenScreen::new);
-            MenuScreens.register(ModMenuTypes.FUELED_STOVE_MENU.get(), FueledStoveScreen::new);
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SALTED_POINTED_DRIPSTONE.get(), RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LEMON_SAPLING.get(), RenderType.cutoutMipped());
 

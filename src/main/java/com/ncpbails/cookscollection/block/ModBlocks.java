@@ -103,12 +103,6 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops().lightLevel(litBlockEmission(13))),
             false, 0);
 
-    public static final RegistryObject<Block> FUELED_STOVE = registerBlock("fueled_stove",
-            () -> new FueledStoveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0F, 6.0F)
-                    .requiresCorrectToolForDrops().lightLevel(litBlockEmission(13))),
-            false, 0);
-
-
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, boolean isFuel, Integer fuelAmount) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
         registerBlockItem(name, toReturn, isFuel, fuelAmount);
@@ -149,7 +143,6 @@ public class ModBlocks {
             event.accept(RUSTIC_LOAF);
             event.accept(SALTED_DRIPSTONE_BLOCK);
             event.accept(OVEN);
-            event.accept(FUELED_STOVE);
         }
     }
 }
