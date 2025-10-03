@@ -76,7 +76,7 @@ public class ModBlocks {
             }, FarmersDelight.CREATIVE_TAB, false, 0);
 
     public static final RegistryObject<Block> FRUITING_LEMON_LEAVES = registerBlock("fruiting_lemon_leaves",
-            () -> new FruitingLeaves(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES)) {
+            () -> new FruitingLeaves(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES), ModItems.LEMON) {
                 @Override public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return true; }
                 @Override public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return 60; }
                 @Override public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return 30; }
