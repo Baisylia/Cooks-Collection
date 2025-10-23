@@ -7,11 +7,13 @@ import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.List;
 
 public class OvenShapedEmiRecipe extends AbstractOvenRecipe {
 
+    private final List<Ingredient> ingredients;
     private final int height;
     private final int width;
 
@@ -19,6 +21,7 @@ public class OvenShapedEmiRecipe extends AbstractOvenRecipe {
         super(recipe.getId(), padIngredients(recipe), recipe.getResultItem(), recipe.getCookTime());
         this.height = recipe.getHeight();
         this.width = recipe.getWidth();
+        this.ingredients = recipe.getIngredients();
     }
 
     @Override
@@ -35,7 +38,7 @@ public class OvenShapedEmiRecipe extends AbstractOvenRecipe {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                builder.addSlot(getInputs().get(index), startX + x * 18, startY + y * 18).drawBack(false);
+                builder.addSlot(EmiIngredient.of(ingredients.get(index)), startX + x * 18, startY + y * 18).drawBack(false);
                 index++;
             }
         }
