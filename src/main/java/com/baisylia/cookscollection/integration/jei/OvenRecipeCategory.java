@@ -1,4 +1,4 @@
-package com.baisylia.cookscollection.integration;
+package com.baisylia.cookscollection.integration.jei;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -6,7 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.baisylia.cookscollection.CooksCollection;
 import com.baisylia.cookscollection.block.ModBlocks;
-import com.baisylia.cookscollection.recipe.OvenShapedRecipe;
+import com.baisylia.cookscollection.recipe.OvenRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -23,8 +23,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecipe> {
-    public final static ResourceLocation UID = new ResourceLocation(CooksCollection.MOD_ID, "baking_shaped");
+public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
+    public final static ResourceLocation UID = new ResourceLocation(CooksCollection.MOD_ID, "baking");
     public final static ResourceLocation TEXTURE =
             new ResourceLocation(CooksCollection.MOD_ID, "textures/gui/oven_gui_jei.png");
 
@@ -33,8 +33,7 @@ public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecip
     private final int regularCookTime = 400;
     private final LoadingCache<Integer, IDrawableAnimated> cachedArrows;
 
-
-    public OvenShapedRecipeCategory(IGuiHelper helper) {
+    public OvenRecipeCategory(IGuiHelper helper) {
         this.background = helper.createDrawable(TEXTURE, 0, 0, 124, 58);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.OVEN.get()));
         this.cachedArrows = CacheBuilder.newBuilder()
@@ -49,13 +48,13 @@ public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecip
     }
 
     @Override
-    public void draw(OvenShapedRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack poseStack, double mouseX, double mouseY) {
+    public void draw(OvenRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack poseStack, double mouseX, double mouseY) {
         IDrawableAnimated arrow = getArrow(recipe);
         arrow.draw(poseStack, 63, 19);
         drawCookTime(recipe, poseStack, 45);
     }
 
-    protected void drawCookTime(OvenShapedRecipe recipe, PoseStack poseStack, int y) {
+    protected void drawCookTime(OvenRecipe recipe, PoseStack poseStack, int y) {
         int cookTime = recipe.getCookTime();
         if (cookTime > 0) {
             int cookTimeSeconds = cookTime / 20;
@@ -67,7 +66,7 @@ public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecip
         }
     }
 
-    protected IDrawableAnimated getArrow(OvenShapedRecipe recipe) {
+    protected IDrawableAnimated getArrow(OvenRecipe recipe) {
         int cookTime = recipe.getCookTime();
         if (cookTime <= 0) {
             cookTime = regularCookTime;
@@ -76,8 +75,8 @@ public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecip
     }
 
     @Override
-    public RecipeType<OvenShapedRecipe> getRecipeType() {
-        return JEICooksCollectionPlugin.BAKING_SHAPED_TYPE;
+    public RecipeType<OvenRecipe> getRecipeType() {
+        return JEICooksCollectionPlugin.BAKING_TYPE;
     }
 
     @Override
@@ -96,19 +95,28 @@ public class OvenShapedRecipeCategory implements IRecipeCategory<OvenShapedRecip
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, OvenShapedRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, OvenRecipe recipe, IFocusGroup focuses) {
         int start = 3;
-        int index = 0;
-
-        for (int y = 0; y < recipe.getHeight(); y++) {
-            for (int x = 0; x < recipe.getWidth(); x++) {
-                builder.addSlot(RecipeIngredientRole.INPUT, start + x * 18, start + y * 18)
-                        .addIngredients(recipe.getIngredients().get(index));
-                index++;
-            }
-        }
-
-        // Add output slot
+        int offset = 18;
+        int offset2 = offset+offset;
+        builder.addSlot(RecipeIngredientRole.INPUT, start, start).addIngredients(recipe.getIngredients().get(0));
+        if (recipe.getIngredients().size() > 1) {
+            builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start).addIngredients(recipe.getIngredients().get(1));
+            if (recipe.getIngredients().size() > 2) {
+                builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start).addIngredients(recipe.getIngredients().get(2));
+                if (recipe.getIngredients().size() > 3) {
+                    builder.addSlot(RecipeIngredientRole.INPUT, start, start+offset).addIngredients(recipe.getIngredients().get(3));
+                    if (recipe.getIngredients().size() > 4) {
+                        builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start+offset).addIngredients(recipe.getIngredients().get(4));
+                        if (recipe.getIngredients().size() > 5) {
+                            builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start+offset).addIngredients(recipe.getIngredients().get(5));
+                            if (recipe.getIngredients().size() > 6) {
+                                builder.addSlot(RecipeIngredientRole.INPUT, start, start+offset2).addIngredients(recipe.getIngredients().get(6));
+                                if (recipe.getIngredients().size() > 7) {
+                                    builder.addSlot(RecipeIngredientRole.INPUT, start+offset, start+offset2).addIngredients(recipe.getIngredients().get(7));
+                                    if (recipe.getIngredients().size() > 8) {
+                                        builder.addSlot(RecipeIngredientRole.INPUT, start+offset2, start+offset2).addIngredients(recipe.getIngredients().get(8));
+        }}}}}}}}
         builder.addSlot(RecipeIngredientRole.OUTPUT, 97, 21).addItemStack(recipe.getResultItem());
     }
 }

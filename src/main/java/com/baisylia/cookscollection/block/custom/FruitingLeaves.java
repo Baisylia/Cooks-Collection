@@ -1,9 +1,9 @@
-package com.ncpbails.cookscollection.block.custom;
+package com.baisylia.cookscollection.block.custom;
 
 
 
-import com.ncpbails.cookscollection.client.ModSounds;
-import com.ncpbails.cookscollection.item.ModItems;
+import com.baisylia.cookscollection.client.ModSounds;
+import com.baisylia.cookscollection.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;

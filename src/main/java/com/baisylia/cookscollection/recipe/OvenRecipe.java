@@ -3,6 +3,7 @@ package com.baisylia.cookscollection.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.baisylia.cookscollection.CooksCollection;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,8 +14,10 @@ import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.RecipeMatcher;
 
+import java.util.EnumSet;
 import java.util.List;
 
 public class OvenRecipe implements Recipe<SimpleContainer> {

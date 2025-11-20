@@ -8,7 +8,9 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import vectorwing.farmersdelight.common.utility.TextUtils;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

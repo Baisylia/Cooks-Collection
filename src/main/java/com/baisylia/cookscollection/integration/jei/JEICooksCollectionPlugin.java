@@ -1,4 +1,4 @@
-package com.baisylia.cookscollection.integration;
+package com.baisylia.cookscollection.integration.jei;
 
 import com.baisylia.cookscollection.CooksCollection;
 import com.baisylia.cookscollection.block.ModBlocks;

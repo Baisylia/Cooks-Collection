@@ -1,6 +1,6 @@
-package com.ncpbails.cookscollection.client;
+package com.baisylia.cookscollection.client;
 
-import com.ncpbails.cookscollection.CooksCollection;
+import com.baisylia.cookscollection.CooksCollection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
 
-import static com.ncpbails.cookscollection.CooksCollection.MOD_ID;
+import static com.baisylia.cookscollection.CooksCollection.MOD_ID;
 
 public class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =

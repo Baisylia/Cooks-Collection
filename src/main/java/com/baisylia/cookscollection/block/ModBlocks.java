@@ -4,10 +4,12 @@ import com.baisylia.cookscollection.CooksCollection;
 import com.baisylia.cookscollection.block.custom.FruitingLeaves;
 import com.baisylia.cookscollection.block.custom.OvenBlock;
 import com.baisylia.cookscollection.block.custom.RusticLoafBlock;
+import com.baisylia.cookscollection.block.custom.SaltedPointedDripstone;
 import com.baisylia.cookscollection.item.ModItems;
 import com.baisylia.cookscollection.world.feature.tree.LemonTreeGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -24,6 +26,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 import vectorwing.farmersdelight.FarmersDelight;
+import vectorwing.farmersdelight.common.block.WildCropBlock;
 
 import java.util.function.Supplier;
 
@@ -73,7 +76,7 @@ public class ModBlocks {
             }, FarmersDelight.CREATIVE_TAB, false, 0);
 
     public static final RegistryObject<Block> FRUITING_LEMON_LEAVES = registerBlock("fruiting_lemon_leaves",
-            () -> new FruitingLeaves(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES)) {
+            () -> new FruitingLeaves(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES), ModItems.LEMON) {
                 @Override public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return true; }
                 @Override public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return 60; }
                 @Override public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return 30; }
@@ -83,11 +86,11 @@ public class ModBlocks {
             () -> new RusticLoafBlock(BlockBehaviour.Properties.copy(vectorwing.farmersdelight.common.registry.ModBlocks.APPLE_PIE.get()).noOcclusion(),
                     ModItems.RUSTIC_LOAF_SLICE), FarmersDelight.CREATIVE_TAB, false, 0);
 
-   // public static final RegistryObject<Block> SALTED_POINTED_DRIPSTONE = registerBlockWithoutBlockItem("salted_pointed_dripstone",
-    //        () -> new SaltedPointedDripstone(BlockBehaviour.Properties.copy(Blocks.POINTED_DRIPSTONE).noOcclusion()
-    //                .sound(SoundType.POINTED_DRIPSTONE).randomTicks().strength(1.5F, 3.0F).dynamicShape().offsetType(BlockBehaviour.OffsetType.XZ))
+    public static final RegistryObject<Block> SALTED_POINTED_DRIPSTONE = registerBlockWithoutBlockItem("salted_pointed_dripstone",
+            () -> new SaltedPointedDripstone(BlockBehaviour.Properties.copy(Blocks.POINTED_DRIPSTONE).noOcclusion()
+                    .sound(SoundType.POINTED_DRIPSTONE).randomTicks().strength(1.5F, 3.0F).dynamicShape().offsetType(BlockBehaviour.OffsetType.XZ))
     //,FarmersDelight.CREATIVE_TAB, false, 0
-    //);
+    );
 
     public static final RegistryObject<Block> SALTED_DRIPSTONE_BLOCK = registerBlock("salted_dripstone_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK).noOcclusion()), FarmersDelight.CREATIVE_TAB, false, 0);

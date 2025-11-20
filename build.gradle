@@ -23,8 +23,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: "org.spongepowered.mixin"
 
-version = '0.4.8'
-group = 'com.baisylia.cookscollection' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = '0.4.6'
+group = 'com.ncpbails.cookscollection' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'cookscollection'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -152,7 +152,11 @@ repositories {
         }
     }
     maven {
-        url = "https://maven.jaackson.me"
+        url = "https://maven.teamabnormals.com/"
+    }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
     }
 }
 
@@ -171,10 +175,13 @@ dependencies {
     compileOnly(fg.deobf("mezz.jei:jei-1.19.2-common-api:11.5.0.297"))
     compileOnly(fg.deobf("mezz.jei:jei-1.19.2-forge-api:11.5.0.297"))
     // at runtime, use the full JEI jar for Forge
-    runtimeOnly(fg.deobf("mezz.jei:jei-1.19.2-forge:11.5.0.297"))
+    // runtimeOnly(fg.deobf("mezz.jei:jei-1.19.2-forge:11.5.0.297"))
 
     runtimeOnly fg.deobf("curse.maven:appleskin-248787:3872808")
     implementation fg.deobf("curse.maven:farmersdelight-398521:5051241")
+
+    compileOnly fg.deobf("dev.emi:emi-forge:1.1.22+1.19.2:api")
+    runtimeOnly fg.deobf("dev.emi:emi-forge:1.1.22+1.19.2")
 
     // Examples using mod jars from ./libs
     // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
@@ -189,11 +196,11 @@ jar {
     manifest {
         attributes([
                 "Specification-Title"     : "cookscollection",
-                "Specification-Vendor"    : "baisylia",
-                "Specification-Version"   : "0.4.8", // We are version 1 of ourselves
+                "Specification-Vendor"    : "ncpbails",
+                "Specification-Version"   : "0.4.6", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "baisylia",
+                "Implementation-Vendor"   : "ncpbails",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
