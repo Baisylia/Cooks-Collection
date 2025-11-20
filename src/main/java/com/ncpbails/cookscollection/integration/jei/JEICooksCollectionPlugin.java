@@ -1,4 +1,4 @@
-package com.ncpbails.cookscollection.integration;
+package com.ncpbails.cookscollection.integration.jei;
 
 import com.ncpbails.cookscollection.CooksCollection;
 import com.ncpbails.cookscollection.block.ModBlocks;
