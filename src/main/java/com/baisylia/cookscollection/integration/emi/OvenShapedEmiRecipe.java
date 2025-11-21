@@ -31,7 +31,7 @@ public class OvenShapedEmiRecipe extends AbstractOvenRecipe {
 
     @Override
     public void addWidgets(WidgetHolder builder) {
-        builder.addTexture(AbstractOvenRecipe.TEXTURE, 0, 0, 116, 60, 0, 0);
+        builder.addTexture(AbstractOvenRecipe.TEXTURE, 0, 0, 124, 58, 0, 0);
         int startX = 2;
         int startY = 2;
         int index = 0;

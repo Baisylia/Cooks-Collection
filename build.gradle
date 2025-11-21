@@ -16,6 +16,7 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -23,7 +24,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: "org.spongepowered.mixin"
 
-version = '0.4.9'
+version = '0.4.10'
 group = 'com.baisylia.cookscollection' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'cookscollection'
 
@@ -45,7 +46,7 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 

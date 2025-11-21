@@ -45,12 +45,12 @@ public abstract class AbstractOvenRecipe implements EmiRecipe {
 
     @Override
     public int getDisplayWidth() {
-        return 120;
+        return 124;
     }
 
     @Override
     public int getDisplayHeight() {
-        return 60;
+        return 58;
     }
 
     protected static void drawCookTime(int cookTime, WidgetHolder builder, int y, int width) {

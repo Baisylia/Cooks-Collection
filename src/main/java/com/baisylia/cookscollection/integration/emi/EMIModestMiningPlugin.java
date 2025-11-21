@@ -26,7 +26,7 @@ public class EMIModestMiningPlugin implements EmiPlugin {
     private static EmiRenderable simplifiedRenderer(int u, int v) {
         return (draw, x, y, delta) -> {
             RenderSystem.setShaderTexture(0, TEXTURE);
-            GuiComponent.blit(draw, x, y, u, v, 120, 60, 120, 60);
+            GuiComponent.blit(draw, x, y, u, v, 124, 58, 124, 58);
         };
     }
 
