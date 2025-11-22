@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -32,6 +33,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import vectorwing.farmersdelight.common.tag.ModTags;
@@ -41,12 +43,13 @@ import java.util.Optional;
 
 import static com.baisylia.cookscollection.block.custom.OvenBlock.LIT;
 
-public class OvenBlockEntity extends BlockEntity implements MenuProvider {
+public class OvenBlockEntity extends BlockEntity implements MenuProvider, WorldlyContainer {
 
     protected final ContainerData data;
     private int progress = 0;
     private int maxProgress = 72;
     private int litTime = 0;
+    private static final int[] INGREDIENT_SLOTS = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
     static int countOutput = 1;
     private ContainerOpenersCounter openersCounter;
 
@@ -119,11 +122,22 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         return new OvenMenu(pContainerId, pInventory, this, this.data);
     }
 
+    LazyOptional<? extends IItemHandler>[] handlers =
+            SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @javax.annotation.Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+        if (side == null && cap == ForgeCapabilities.ITEM_HANDLER) {
             return lazyItemHandler.cast();
+        }
+        if (!this.remove && side != null && cap == ForgeCapabilities.ITEM_HANDLER) {
+            if (side == Direction.UP)
+                return handlers[0].cast();
+            else if (side == Direction.DOWN)
+                return handlers[1].cast();
+            else
+                return handlers[2].cast();
         }
 
         return super.getCapability(cap, side);
@@ -318,6 +332,50 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         this.maxProgress = 72;
     }
 
+    @Override
+    public int getContainerSize() {
+        return this.itemHandler.getSlots();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        for(int i = 0; i < this.itemHandler.getSlots(); ++i) {
+            ItemStack itemStack = this.itemHandler.getStackInSlot(i);
+            if (!itemStack.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public ItemStack getItem(int slot) {
+        return this.itemHandler.getStackInSlot(slot);
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        return this.itemHandler.extractItem(slot, amount, false);
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        return this.itemHandler.extractItem(slot, 1, false);
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack itemStack) {
+        this.itemHandler.setStackInSlot(slot, itemStack);
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        if (this.level.getBlockEntity(this.worldPosition) != this) {
+            return false;
+        } else {
+            return player.distanceToSqr((double)this.worldPosition.getX() + 0.5D, (double)this.worldPosition.getY() + 0.5D, (double)this.worldPosition.getZ() + 0.5D) <= 64.0D;
+        }
+    }
     public void startOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
             this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
@@ -349,6 +407,30 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider {
         double y = (double)this.worldPosition.getY() + (double)0.5F + (double)normal.getY() / (double)2.0F;
         double z = (double)this.worldPosition.getZ() + (double)0.5F + (double)normal.getZ() / (double)2.0F;
         this.level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+    }
+
+    @Override
+    public int[] getSlotsForFace(Direction direction) {
+        if (direction == Direction.DOWN) {
+            return new int[]{9};
+        } else return INGREDIENT_SLOTS;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int slot, ItemStack itemStack, @Nullable Direction direction) {
+        return slot != 9;
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack itemStack, Direction direction) {
+        return true;
+    }
+
+    @Override
+    public void clearContent() {
+        for(int i = 0; i < 11; ++i) {
+            this.itemHandler.setStackInSlot(i, ItemStack.EMPTY);
+        }
     }
 }
 
