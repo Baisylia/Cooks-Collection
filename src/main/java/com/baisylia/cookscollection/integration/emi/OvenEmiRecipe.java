@@ -2,7 +2,6 @@ package com.baisylia.cookscollection.integration.emi;
 
 import com.baisylia.cookscollection.recipe.OvenRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
-import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -25,7 +24,7 @@ public class OvenEmiRecipe extends AbstractOvenRecipe {
 
     @Override
     public EmiRecipeCategory getCategory() {
-        return EMIModestMiningPlugin.SHAPELESS_BAKING;
+        return EMICooksCollectionPlugin.SHAPELESS_BAKING;
     }
 
     @Override
