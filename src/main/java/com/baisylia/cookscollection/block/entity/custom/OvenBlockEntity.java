@@ -428,7 +428,7 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider, Worldl
 
     @Override
     public void clearContent() {
-        for(int i = 0; i < 11; ++i) {
+        for(int i = 0; i < 10; ++i) {
             this.itemHandler.setStackInSlot(i, ItemStack.EMPTY);
         }
     }
