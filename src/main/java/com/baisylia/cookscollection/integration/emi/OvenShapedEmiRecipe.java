@@ -3,7 +3,6 @@ package com.baisylia.cookscollection.integration.emi;
 import com.google.common.collect.Lists;
 import com.baisylia.cookscollection.recipe.OvenShapedRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
-import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
@@ -26,12 +25,12 @@ public class OvenShapedEmiRecipe extends AbstractOvenRecipe {
 
     @Override
     public EmiRecipeCategory getCategory() {
-        return EMIModestMiningPlugin.SHAPED_BAKING;
+        return EMICooksCollectionPlugin.SHAPED_BAKING;
     }
 
     @Override
     public void addWidgets(WidgetHolder builder) {
-        builder.addTexture(AbstractOvenRecipe.TEXTURE, 0, 0, 116, 60, 0, 0);
+        builder.addTexture(AbstractOvenRecipe.TEXTURE, 0, 0, 124, 58, 0, 0);
         int startX = 2;
         int startY = 2;
         int index = 0;
