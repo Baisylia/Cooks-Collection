@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
@@ -50,13 +51,18 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider, Worldl
     private int maxProgress = 72;
     private int litTime = 0;
     private static final int[] INGREDIENT_SLOTS = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
-    static int countOutput = 1;
-    private ContainerOpenersCounter openersCounter;
+    private static final int OUTPUT_SLOT = 9;
+    private final ContainerOpenersCounter openersCounter;
+
+    private Recipe<SimpleContainer> currentRecipe = null;
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(11) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            if (slot < 9) {
+                resetProgress();
+            }
         }
     };
 
@@ -206,6 +212,19 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider, Worldl
         }
     }
 
+    private static boolean canInsertItemIntoOutput(SimpleContainer inventory, ItemStack outputStack) {
+        ItemStack currentOutput = inventory.getItem(OUTPUT_SLOT);
+
+        if (currentOutput.isEmpty()) {
+            return true;
+        }
+        if (!currentOutput.is(outputStack.getItem())) {
+            return false;
+        }
+
+        return currentOutput.getCount() + outputStack.getCount() <= currentOutput.getMaxStackSize();
+    }
+
     private static boolean hasRecipe(OvenBlockEntity entity) {
         Level level = entity.level;
         BlockPos pos = entity.getBlockPos();
@@ -220,6 +239,12 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider, Worldl
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
+        if (entity.currentRecipe != null) {
+            if (entity.currentRecipe.matches(inventory, level)) {
+                return canInsertItemIntoOutput(inventory, entity.currentRecipe.getResultItem());
+            }
+        }
+
         // Check for OvenShapedRecipe
         Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
                 .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
@@ -229,11 +254,19 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider, Worldl
                 .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
 
         if (shapedMatch.isPresent()) {
-            entity.maxProgress = shapedMatch.get().getCookTime();
-            return true;
+            entity.currentRecipe = shapedMatch.get();
+            if (canInsertItemIntoOutput(inventory, shapedMatch.get().getResultItem())) {
+                entity.maxProgress = shapedMatch.get().getCookTime();
+                return true;
+            }
         } else if (recipeMatch.isPresent()) {
-            entity.maxProgress = recipeMatch.get().getCookTime();
-            return true;
+            entity.currentRecipe = recipeMatch.get();
+            if (canInsertItemIntoOutput(inventory, recipeMatch.get().getResultItem())) {
+                entity.maxProgress = recipeMatch.get().getCookTime();
+                return true;
+            }
+        } else {
+            entity.currentRecipe = null;
         }
 
         return false;
@@ -244,92 +277,63 @@ public class OvenBlockEntity extends BlockEntity implements MenuProvider, Worldl
         BlockState stateBelow = level.getBlockState(pos.below());
         if (stateBelow.hasProperty(BlockStateProperties.LIT) ? stateBelow.getValue(BlockStateProperties.LIT) : true) {
             if (stateBelow.is(ModTags.HEAT_SOURCES) || stateBelow.is(ModTags.HEAT_CONDUCTORS)) {
-                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(true)), 3);
+                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.TRUE), 3);
                 return true;
             }
-            else {
-                level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(false)), 3);
-                return false;
-            }
         }
-        else {
-            level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.valueOf(false)), 3);
-            return false;
-        }
+
+        level.setBlock(pos, entity.getBlockState().setValue(LIT, Boolean.FALSE), 3);
+        return false;
     }
 
     private static void craftItem(OvenBlockEntity entity) {
-        Level level = entity.level;
-        SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
-        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
-            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
+        Recipe<?> recipe = entity.currentRecipe;
+
+        if (recipe == null) {
+            return;
         }
 
-        // Check for OvenShapedRecipe
-        Optional<OvenShapedRecipe> shapedMatch = level.getRecipeManager()
-                .getRecipeFor(OvenShapedRecipe.Type.INSTANCE, inventory, level);
+        ItemStack resultItem = recipe.getResultItem();
 
-        // Check for OvenRecipe
-        Optional<OvenRecipe> recipeMatch = level.getRecipeManager()
-                .getRecipeFor(OvenRecipe.Type.INSTANCE, inventory, level);
-
-        if (shapedMatch.isPresent()) {
-            for(int i = 0; i < 9; ++i) {
-                ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
-                if (slotStack.hasCraftingRemainingItem()) {
-                    Direction direction = ((Direction)entity.getBlockState().getValue(OvenBlock.FACING)).getCounterClockWise();
-                    double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
-                    double y = (double)entity.worldPosition.getY() + 0.7;
-                    double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-                    spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
-                }
+        // Handle by-products (empty buckets, etc.)
+        for(int i = 0; i < 9; ++i) {
+            ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
+            if (slotStack.hasCraftingRemainingItem()) {
+                Direction direction = entity.getBlockState().getValue(OvenBlock.FACING).getCounterClockWise();
+                double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
+                double y = (double)entity.worldPosition.getY() + 0.7;
+                double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
+                spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (float)direction.getStepX() * 0.08F, 0.25, (float)direction.getStepZ() * 0.08F);
             }
-
-            for (int i = 0; i < 9; ++i) {
-                entity.itemHandler.extractItem(i, 1, false);
-            }
-            inventory.getItem(9).is(shapedMatch.get().getResultItem().getItem());
-
-            entity.itemHandler.setStackInSlot(9, new ItemStack(shapedMatch.get().getResultItem().getItem(),
-                    entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(shapedMatch.get().getResultItem())));
-
-            entity.resetProgress();
-
-        } else if (recipeMatch.isPresent()) {
-            for(int i = 0; i < 9; ++i) {
-                ItemStack slotStack = entity.itemHandler.getStackInSlot(i);
-                if (slotStack.hasCraftingRemainingItem()) {
-                    Direction direction = ((Direction)entity.getBlockState().getValue(OvenBlock.FACING)).getCounterClockWise();
-                    double x = (double)entity.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
-                    double y = (double)entity.worldPosition.getY() + 0.7;
-                    double z = (double)entity.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-                    spawnItemEntity(entity.level, entity.itemHandler.getStackInSlot(i).getCraftingRemainingItem(), x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
-                }
-            }
-
-            for (int i = 0; i < 9; ++i) {
-                entity.itemHandler.extractItem(i, 1, false);
-            }
-            inventory.getItem(9).is(recipeMatch.get().getResultItem().getItem());
-
-            entity.itemHandler.setStackInSlot(9, new ItemStack(recipeMatch.get().getResultItem().getItem(),
-                    entity.itemHandler.getStackInSlot(9).getCount() + entity.getTheCount(recipeMatch.get().getResultItem())));
-
-            entity.resetProgress();
         }
+
+        // Consume ingredients
+        for (int i = 0; i < 9; ++i) {
+            entity.itemHandler.extractItem(i, 1, false);
+        }
+
+        // Add result
+        entity.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(resultItem.getItem(),
+                entity.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + entity.getTheCount(resultItem)));
+
+        entity.resetProgress();
     }
+
     public static void spawnItemEntity(Level level, ItemStack stack, double x, double y, double z, double xMotion, double yMotion, double zMotion) {
         ItemEntity entity = new ItemEntity(level, x, y, z, stack);
         entity.setDeltaMovement(xMotion, yMotion, zMotion);
         level.addFreshEntity(entity);
     }
+
     private int getTheCount (ItemStack itemIn)
     {
         return itemIn.getCount();
     }
+
     private void resetProgress() {
         this.progress = 0;
         this.maxProgress = 72;
+        this.currentRecipe = null;
     }
 
     @Override
