@@ -24,7 +24,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: "org.spongepowered.mixin"
 
-version = '0.4.11'
+version = '0.4.12'
 group = 'com.baisylia.cookscollection' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'cookscollection'
 
@@ -198,7 +198,7 @@ jar {
         attributes([
                 "Specification-Title"     : "cookscollection",
                 "Specification-Vendor"    : "baisylia",
-                "Specification-Version"   : "0.4.11", // We are version 1 of ourselves
+                "Specification-Version"   : "0.4.12", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "baisylia",
